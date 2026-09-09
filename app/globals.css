@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Design tokens (Bible §11 GLOBAL DESIGN SYSTEM, §90). Both themes must
+ * stay legible — "Premium Medical Technology": clean, calm, KU-green
+ * accent, never a heavy admin-dashboard look.
+ */
+@layer base {
+  :root {
+    --background: 150 20% 98%;
+    --surface: 0 0% 100%;
+    --surface-elevated: 0 0% 100%;
+    --foreground: 160 15% 12%;
+    --muted: 160 8% 45%;
+    --accent: 152 45% 32%;
+    --border: 150 15% 88%;
+    --success: 142 45% 38%;
+    --warning: 38 92% 45%;
+    --warning-foreground: 38 92% 28%;
+    --danger: 4 78% 48%;
+    --accent-foreground: 0 0% 100%;
+    --success-foreground: 0 0% 0%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 160 20% 7%;
+    --surface: 160 15% 11%;
+    --surface-elevated: 160 15% 14%;
+    --foreground: 150 15% 95%;
+    --muted: 150 8% 65%;
+    --accent: 152 45% 55%;
+    --border: 160 12% 20%;
+    --success: 142 45% 55%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 38 92% 60%;
+    --danger: 4 78% 62%;
+    --accent-foreground: 0 0% 0%;
+    --success-foreground: 0 0% 0%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
