@@ -121,4 +121,52 @@ export const TROUBLESHOOTING_ISSUES: TroubleshootingIssue[] = [
     escalationMessage:
       "หากอุปกรณ์ยังไม่ตอบสนอง กรุณาติดต่อ IT Support — ห้ามเปิดฝา Rack หรือปรับตั้งค่าระบบเองโดยไม่ได้รับอนุญาต",
   },
+  {
+    id: "tv-input-changed-after-input-box",
+    problem: "ภาพหายหลังกด Input Box (บางห้อง)",
+    category: "display",
+    symptoms: [
+      "ในบางห้อง เมื่อกดปุ่มที่กล่องควบคุมสัญญาณ TV อาจเปลี่ยนไปช่องอื่นอัตโนมัติ และบางครั้งไม่กลับมาช่องเดิมเอง",
+    ],
+    quickFixes: [
+      {
+        instruction:
+          "ใช้รีโมท TV เลือกกลับไปยังช่อง HDMI ที่เชื่อมต่อกับระบบห้อง (โดยปกติคือ HDMI 1)",
+        expectedResult: "ภาพจากระบบห้องกลับมาแสดงตามปกติ",
+      },
+    ],
+    escalationMessage: "หากภาพยังไม่กลับมา กรุณาติดต่อ IT Support",
+  },
+  {
+    id: "windows-pc-only-display",
+    problem: "เสียบ HDMI แล้วภาพไม่ขึ้น (Windows แสดง PC only)",
+    category: "cable-input",
+    symptoms: ["เสียบสาย HDMI จากโน้ตบุ๊กแล้วภาพไม่ขึ้นจอห้อง"],
+    quickFixes: [
+      {
+        instruction: "กด Win + P บนโน้ตบุ๊ก แล้วเลือกโหมด Duplicate",
+        expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอห้องเช่นเดียวกับหน้าจอโน้ตบุ๊ก",
+      },
+    ],
+    escalationMessage: "หากภาพยังไม่ขึ้น กรุณาติดต่อ IT Support",
+  },
+  {
+    id: "room-pc-no-audio",
+    problem: "ใช้คอมพิวเตอร์ประจำห้องแล้วไม่มีเสียง",
+    category: "general",
+    symptoms: [
+      "ปัญหาอาจอยู่ที่การตั้งค่าเสียงของคอมพิวเตอร์ ไม่จำเป็นต้องหมายความว่าระบบห้องมีปัญหา",
+    ],
+    quickFixes: [
+      {
+        instruction: "ตรวจสอบว่าไม่ได้ปิดเสียง (Mute) ไว้บนคอมพิวเตอร์ประจำห้อง",
+        expectedResult: "ไอคอนเสียงบนคอมพิวเตอร์แสดงว่าไม่ได้ปิดเสียง",
+      },
+      {
+        instruction: "ตรวจสอบว่าเลือกลำโพงของระบบห้องเป็นอุปกรณ์เสียงหลัก (Output) แล้ว",
+        expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
+      },
+    ],
+    escalationMessage: "หากยังไม่มีเสียง กรุณาติดต่อ IT Support",
+  },
 ];

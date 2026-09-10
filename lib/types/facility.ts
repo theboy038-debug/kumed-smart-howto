@@ -40,7 +40,7 @@ export interface Floor {
 }
 
 export interface RoomConfiguration {
-  wifi: Fact<{ ssid: string }>;
+  wifi: Fact<{ ssid: string; password?: string }>;
   displayName: Fact<{ value: string }>;
   /** Room-level override; falls back to the global SUPPORT_CONFIG when absent. */
   contact?: Fact<{ phone?: string; lineUrl?: string; helpdeskUrl?: string }>;

@@ -10,13 +10,55 @@
 import type { Workflow } from "@/lib/types";
 
 // ---------------------------------------------------------------------------
-// Floor 5 — Jongrak (Bible §18, §24–§26)
+// Floor 5 — Jongrak (Bible §18, §24–§26; Phase 7 §3–§11)
 // ---------------------------------------------------------------------------
+
+const jongrakRoomPcPresentation: Workflow = {
+  id: "jongrak-room-pc-presentation",
+  slug: "room-pc-presentation",
+  title: "🖥️ นำเสนอผ่านคอมพิวเตอร์ประจำห้อง",
+  shortDescription:
+    "ใช้คอมพิวเตอร์ที่อยู่ในห้องเพื่อเปิด PowerPoint, PDF เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
+  icon: "Monitor",
+  steps: [
+    {
+      id: "jongrak-pc-1",
+      order: 1,
+      title: "เปิดคอมพิวเตอร์ประจำห้อง",
+      instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
+      image: { status: "pending" },
+    },
+    {
+      id: "jongrak-pc-2",
+      order: 2,
+      title: "รอภาพขึ้นจอ",
+      instruction: "รอสักครู่ให้ภาพขึ้นจอ",
+      expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอ",
+      image: { status: "pending" },
+    },
+    {
+      id: "jongrak-pc-3",
+      order: 3,
+      title: "เปิดเนื้อหาที่ต้องการนำเสนอ",
+      instruction: "เปิดไฟล์หรือโปรแกรมที่ต้องการนำเสนอ เช่น PowerPoint, PDF หรือเว็บไซต์",
+      image: { status: "pending" },
+    },
+    {
+      id: "jongrak-pc-4",
+      order: 4,
+      title: "เริ่มนำเสนอ",
+      instruction: "เริ่มนำเสนอเนื้อหาของคุณได้เลย",
+      image: { status: "pending" },
+    },
+  ],
+  troubleshootingIds: ["no-signal-on-display"],
+};
 
 const jongrakWebexRecording: Workflow = {
   id: "jongrak-webex-recording",
   slug: "webex-recording",
   title: "🎥 ประชุม Webex พร้อมบันทึกภาพ",
+  shortDescription: "ใช้สำหรับประชุมออนไลน์ — ไม่จำเป็นต้องเปิดหากแค่ต้องการนำเสนอ",
   icon: "Video",
   criticalWarning: {
     level: "danger",
@@ -57,53 +99,132 @@ const jongrakWebexRecording: Workflow = {
 const jongrakPersonalScreenShare: Workflow = {
   id: "jongrak-personal-screen-share",
   slug: "personal-screen-share",
-  title: "📱 แชร์หน้าจอส่วนตัว (Notebook / Smartphone)",
+  title: "📱 แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
+  shortDescription: "โน้ตบุ๊ก (Laptop), Mac หรือ iPad — เลือกวิธีที่สะดวกสำหรับคุณ",
   icon: "Smartphone",
-  steps: [
-    {
-      id: "jongrak-share-1",
-      order: 1,
-      title: "สลับสัญญาณโปรเจกเตอร์",
-      instruction: "สลับสัญญาณโปรเจกเตอร์ไปที่ OUT 2 (Wireless)",
-      expectedResult: "หน้าจอพร้อมรับสัญญาณจาก Wireless Display",
-      image: { status: "pending" },
-    },
-    {
-      id: "jongrak-share-2",
-      order: 2,
-      title: "เชื่อมต่อจากอุปกรณ์ (Windows)",
-      instruction: "กด Win + K แล้วเลือกชื่อจอประจำชั้น 5",
-      platformVariant: "windows",
-      keyboardShortcut: ["Win", "K"],
-      statusTags: [{ kind: "wifi-required" }],
-      image: { status: "pending" },
-    },
-    {
-      id: "jongrak-share-3",
-      order: 3,
-      title: "เชื่อมต่อจากอุปกรณ์ (Mac / iPad)",
-      instruction:
-        "เปิด Control Center → Screen Mirroring แล้วเลือกชื่อจอห้องประชุม",
-      platformVariant: "mac",
-      statusTags: [{ kind: "wifi-required" }],
-      image: { status: "pending" },
-    },
-  ],
-  troubleshootingIds: [
-    "wireless-device-not-found",
-    "no-signal-on-display",
-    "cannot-connect",
-  ],
+  methodChoice: {
+    question: "เลือกวิธีแชร์หน้าจอ",
+    options: [
+      {
+        id: "dongle",
+        label: "แชร์ผ่าน Wireless Dongle",
+        description: "เสียบอุปกรณ์ที่ให้มาเข้ากับโน้ตบุ๊ก แล้วกดปุ่ม Share เพื่อส่งภาพขึ้นจอ",
+        fallbackMethodId: "wifi",
+        fallbackPrompt: "ภาพยังไม่ขึ้น? ลองเชื่อมต่อผ่าน Wi-Fi แทน",
+        steps: [
+          {
+            id: "jongrak-dongle-1",
+            order: 1,
+            title: "เสียบ Wireless Dongle",
+            instruction: "เสียบ Wireless Dongle เข้ากับโน้ตบุ๊ก (Laptop)",
+            image: { status: "pending" },
+          },
+          {
+            id: "jongrak-dongle-2",
+            order: 2,
+            title: "รอให้พร้อมใช้งาน",
+            instruction: "รอให้อุปกรณ์พร้อมใช้งาน",
+            image: { status: "pending" },
+          },
+          {
+            id: "jongrak-dongle-3",
+            order: 3,
+            title: "กดปุ่ม Share",
+            instruction: "กดปุ่ม Share บน Wireless Dongle",
+            image: { status: "pending" },
+          },
+          {
+            id: "jongrak-dongle-4",
+            order: 4,
+            title: "ตรวจสอบภาพ",
+            instruction: "รอสักครู่ แล้วดูว่าภาพขึ้นจอหรือไม่",
+            expectedResult: "ภาพจากโน้ตบุ๊กควรแสดงบนจอห้อง",
+            image: { status: "pending" },
+          },
+        ],
+      },
+      {
+        id: "wifi",
+        label: "แชร์ผ่าน Wi-Fi",
+        badge: "แนะนำสำหรับ Mac",
+        description: "เชื่อมต่อ Wi-Fi ของห้อง แล้วแชร์หน้าจอจากอุปกรณ์ของคุณ",
+        osChoice: {
+          question: "คุณใช้อุปกรณ์อะไร?",
+          options: [
+            {
+              id: "windows",
+              label: "โน้ตบุ๊ก Windows",
+              steps: [
+                {
+                  id: "jongrak-wifi-win-1",
+                  order: 1,
+                  title: "เชื่อมต่อ Wi-Fi",
+                  instruction: 'เชื่อมต่อ Wi-Fi ชื่อ "WL Present Meeting Room" รหัสผ่าน "12345678"',
+                  statusTags: [{ kind: "wifi-required" }],
+                  showRoomWifi: true,
+                  image: { status: "pending" },
+                },
+                {
+                  id: "jongrak-wifi-win-2",
+                  order: 2,
+                  title: "แชร์หน้าจอ",
+                  instruction: 'กด "Win + K" แล้วเลือกอุปกรณ์ของห้อง',
+                  platformVariant: "windows",
+                  keyboardShortcut: ["Win", "K"],
+                  image: { status: "pending" },
+                },
+              ],
+            },
+            {
+              id: "mac",
+              label: "Mac หรือ iPad",
+              steps: [
+                {
+                  id: "jongrak-wifi-mac-1",
+                  order: 1,
+                  title: "เชื่อมต่อ Wi-Fi",
+                  instruction: 'เชื่อมต่อ Wi-Fi ชื่อ "WL Present Meeting Room" รหัสผ่าน "12345678"',
+                  statusTags: [{ kind: "wifi-required" }],
+                  showRoomWifi: true,
+                  image: { status: "pending" },
+                },
+                {
+                  id: "jongrak-wifi-mac-2",
+                  order: 2,
+                  title: "แชร์หน้าจอ",
+                  instruction: "เปิด Control Center แล้วเลือก Screen Mirroring จากนั้นเลือกระบบของห้อง",
+                  platformVariant: "mac",
+                  image: { status: "pending" },
+                },
+              ],
+            },
+          ],
+        },
+        steps: [
+          {
+            id: "jongrak-wifi-3",
+            order: 3,
+            title: "ตรวจสอบภาพ",
+            instruction: "ตรวจสอบว่าภาพจากอุปกรณ์ของคุณขึ้นจอแล้ว",
+            expectedResult: "ภาพจากโน้ตบุ๊กหรือ iPad ปรากฏบนจอ",
+            image: { status: "pending" },
+          },
+        ],
+      },
+    ],
+  },
+  steps: [],
+  troubleshootingIds: ["no-signal-on-display"],
 };
 
 // ---------------------------------------------------------------------------
-// Floor 6 — Meeting Room (Bible §21)
+// Floor 6 — Meeting Room (Bible §21) — unchanged by Phase 7 (patch only covers 601–608)
 // ---------------------------------------------------------------------------
 
 const floor6MeetingUseHdmi: Workflow = {
   id: "floor6-meeting-use-hdmi",
   slug: "use-hdmi",
-  title: "🔌 ต่อโน้ตบุ๊กผ่านสาย HDMI",
+  title: "🔌 ต่อโน้ตบุ๊ก (Laptop) ผ่านสาย HDMI",
   icon: "Cable",
   steps: [
     {
@@ -127,7 +248,9 @@ const floor6MeetingUseHdmi: Workflow = {
 };
 
 // ---------------------------------------------------------------------------
-// Floor 6 — Classrooms 601–608, shared workflows (Bible §22)
+// Floor 6 — Classrooms 601–608, shared workflows (Bible §22; Phase 7 §12–§22)
+// VERIFIED: no HDMI cable is provided for personal devices in these rooms —
+// personal devices (notebook/iPad) use Wireless only.
 // ---------------------------------------------------------------------------
 
 const smallClassroomUseRoomPc: Workflow = {
@@ -135,55 +258,128 @@ const smallClassroomUseRoomPc: Workflow = {
   slug: "use-room-pc",
   title: "🖥 ใช้คอมพิวเตอร์ประจำห้อง",
   icon: "Monitor",
+  criticalWarning: {
+    level: "info",
+    title: "💡 ข้อควรรู้",
+    message:
+      "ในบางห้อง เมื่อกดปุ่มที่กล่องควบคุมสัญญาณ TV อาจเปลี่ยนไปช่องอื่นอัตโนมัติ หากภาพหาย ให้ใช้รีโมท TV เลือกกลับไปยังช่อง HDMI ที่เชื่อมต่อกับระบบห้อง",
+  },
   steps: [
     {
       id: "small-classroom-pc-1",
       order: 1,
-      title: "สลับสัญญาณภาพ",
-      instruction: "สลับสัญญาณภาพที่กล่องควบคุมหน้าห้องไปที่ Input 1 (PC)",
+      title: "ตรวจสอบระบบห้อง",
+      instruction:
+        "ตรวจสอบว่าระบบห้องเปิดอยู่ — โดยปกติเจ้าหน้าที่อาคารเป็นผู้เปิดระบบให้ก่อนใช้งาน",
+      image: { status: "pending" },
+    },
+    {
+      id: "small-classroom-pc-2",
+      order: 2,
+      title: "เปิดคอมพิวเตอร์ประจำห้อง",
+      instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
+      image: { status: "pending" },
+    },
+    {
+      id: "small-classroom-pc-3",
+      order: 3,
+      title: "ตรวจสอบภาพ",
+      instruction: "ตรวจสอบว่าภาพจากคอมพิวเตอร์ประจำห้องขึ้นจอแล้ว",
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
+    {
+      id: "small-classroom-pc-4",
+      order: 4,
+      title: "ใช้คอมพิวเตอร์นำเสนอ",
+      instruction: "เปิด PowerPoint, PDF, เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
+      image: { status: "pending" },
+    },
+    {
+      id: "small-classroom-pc-5",
+      order: 5,
+      title: "ตรวจสอบเสียง",
+      instruction: "หากเนื้อหาที่นำเสนอมีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
+      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
+      image: { status: "pending" },
+    },
   ],
-  troubleshootingIds: ["no-signal-on-display"],
+  troubleshootingIds: ["no-signal-on-display", "tv-input-changed-after-input-box"],
 };
 
 const smallClassroomWirelessShare: Workflow = {
   id: "small-classroom-wireless-share",
   slug: "wireless-share",
-  title: "📡 แชร์หน้าจอแบบไร้สาย",
+  title: "📡 แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
+  shortDescription: "โน้ตบุ๊ก (Laptop) หรือ iPad — ผ่านระบบไร้สายเท่านั้น",
   icon: "Wifi",
+  osChoice: {
+    question: "คุณใช้อุปกรณ์อะไร?",
+    options: [
+      {
+        id: "windows",
+        label: "โน้ตบุ๊ก Windows",
+        steps: [
+          {
+            id: "small-classroom-wireless-win-1",
+            order: 1,
+            title: "เชื่อมต่อ Wi-Fi",
+            instruction: "เชื่อมต่อ Wi-Fi ประจำห้องเรียน",
+            statusTags: [{ kind: "wifi-required" }],
+            showRoomWifi: true,
+            image: { status: "pending" },
+          },
+          {
+            id: "small-classroom-wireless-win-2",
+            order: 2,
+            title: "เชื่อมต่อจากโน้ตบุ๊ก",
+            instruction: "กด Win + K แล้วเลือกชื่อจอห้องเรียน",
+            platformVariant: "windows",
+            keyboardShortcut: ["Win", "K"],
+            image: { status: "pending" },
+          },
+        ],
+      },
+      {
+        id: "mac",
+        label: "Mac หรือ iPad",
+        steps: [
+          {
+            id: "small-classroom-wireless-mac-1",
+            order: 1,
+            title: "เชื่อมต่อ Wi-Fi",
+            instruction: "เชื่อมต่อ Wi-Fi ประจำห้องเรียน",
+            statusTags: [{ kind: "wifi-required" }],
+            showRoomWifi: true,
+            image: { status: "pending" },
+          },
+          {
+            id: "small-classroom-wireless-mac-2",
+            order: 2,
+            title: "เชื่อมต่อจาก Mac หรือ iPad",
+            instruction: "เปิด Control Center → Screen Mirroring แล้วเลือกชื่อจอห้องเรียน",
+            platformVariant: "mac",
+            image: { status: "pending" },
+          },
+        ],
+      },
+    ],
+  },
   steps: [
-    {
-      id: "small-classroom-wireless-1",
-      order: 1,
-      title: "สลับสัญญาณภาพ",
-      instruction: "สลับสัญญาณภาพไปที่ Input 2 (Crestron)",
-      image: { status: "pending" },
-    },
-    {
-      id: "small-classroom-wireless-2",
-      order: 2,
-      title: "เชื่อมต่อ Wi-Fi",
-      instruction: "เชื่อมต่อ Wi-Fi ประจำห้องเรียน",
-      statusTags: [{ kind: "wifi-required" }],
-      image: { status: "pending" },
-    },
     {
       id: "small-classroom-wireless-3",
       order: 3,
-      title: "เชื่อมต่อจากอุปกรณ์ (Windows)",
-      instruction: "กด Win + K แล้วเลือกชื่อจอห้องเรียน",
-      platformVariant: "windows",
-      keyboardShortcut: ["Win", "K"],
+      title: "ตรวจสอบภาพ",
+      instruction: "ตรวจสอบว่าภาพจากอุปกรณ์ของคุณขึ้นจอแล้ว",
+      expectedResult: "ภาพจากอุปกรณ์ส่วนตัวแสดงบนจอห้อง",
       image: { status: "pending" },
     },
     {
       id: "small-classroom-wireless-4",
       order: 4,
-      title: "เชื่อมต่อจากอุปกรณ์ (Mac / iPad)",
-      instruction: "เปิด Screen Mirroring แล้วเลือกชื่อจอห้องเรียน",
-      platformVariant: "mac",
+      title: "ตรวจสอบเสียง",
+      instruction: "หากเนื้อหาที่แชร์มีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
+      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
       image: { status: "pending" },
     },
   ],
@@ -195,7 +391,7 @@ const smallClassroomWirelessShare: Workflow = {
 };
 
 // ---------------------------------------------------------------------------
-// Floor 7 — Smart Classrooms 701/702 (Bible §21, §23)
+// Floor 7 — Smart Classrooms 701/702 (Bible §21, §23; Phase 7 §23–§32)
 // ---------------------------------------------------------------------------
 
 const smartClassroomUseRoomPc: Workflow = {
@@ -203,83 +399,164 @@ const smartClassroomUseRoomPc: Workflow = {
   slug: "use-room-pc",
   title: "🖥 ใช้คอมพิวเตอร์ประจำห้อง",
   icon: "Monitor",
+  criticalWarning: {
+    level: "info",
+    title: "💡 ข้อควรรู้",
+    message:
+      "หากใช้คอมพิวเตอร์ประจำห้องแล้วไม่มีเสียง ให้ตรวจสอบการตั้งค่าเสียงของคอมพิวเตอร์ก่อน",
+  },
   steps: [
     {
       id: "smart-classroom-pc-1",
       order: 1,
-      title: "แตะ PC บน Touchscreen",
-      instruction: "แตะปุ่ม PC บนหน้าจอสัมผัสขนาดเล็ก (Smart Touchscreen)",
+      title: "เปิดคอมพิวเตอร์ประจำห้อง",
+      instruction:
+        "เปิดคอมพิวเตอร์ประจำห้องก่อน — โดยปกติตู้ Rack ถูกเปิดไว้แล้วโดยเจ้าหน้าที่อาคาร แต่คอมพิวเตอร์อาจยังไม่ได้เปิด",
+      image: { status: "pending" },
+    },
+    {
+      id: "smart-classroom-pc-2",
+      order: 2,
+      title: "เลือกแหล่งสัญญาณที่ Smart Touchscreen",
+      instruction:
+        "แตะปุ่มคอมพิวเตอร์ประจำห้องบน Smart Touchscreen (หากภาพยังไม่ขึ้นอัตโนมัติ)",
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
+    {
+      id: "smart-classroom-pc-3",
+      order: 3,
+      title: "ตรวจสอบเสียง",
+      instruction: "หากเนื้อหาที่นำเสนอมีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
+      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
+      image: { status: "pending" },
+    },
   ],
-  troubleshootingIds: ["no-signal-on-display"],
+  troubleshootingIds: ["no-signal-on-display", "room-pc-no-audio"],
 };
 
 const smartClassroomUseNotebookHdmi: Workflow = {
   id: "smart-classroom-use-notebook-hdmi",
   slug: "use-notebook-hdmi",
-  title: "💻 ต่อโน้ตบุ๊กผ่านสาย HDMI",
+  title: "💻 ต่อโน้ตบุ๊ก (Laptop) ผ่านสาย HDMI",
   icon: "Cable",
   steps: [
     {
       id: "smart-classroom-hdmi-1",
       order: 1,
       title: "เสียบสาย HDMI",
-      instruction: "เสียบสาย HDMI สำรองเข้ากับโน้ตบุ๊ก",
+      instruction: "เสียบสาย HDMI สำรองเข้ากับโน้ตบุ๊กก่อน",
       image: { status: "pending" },
     },
     {
       id: "smart-classroom-hdmi-2",
       order: 2,
-      title: "แตะ Notebook / Laptop บน Touchscreen",
-      instruction: "แตะปุ่ม Notebook / Laptop บน Smart Touchscreen",
+      title: "รอระบบตรวจพบสัญญาณ",
+      instruction: "รอสักครู่ให้ระบบตรวจพบสัญญาณจากโน้ตบุ๊ก",
+      image: { status: "pending" },
+    },
+    {
+      id: "smart-classroom-hdmi-3",
+      order: 3,
+      title: "เลือกแหล่งสัญญาณที่ Smart Touchscreen",
+      instruction: "แตะ Smart Touchscreen แล้วเลือกช่อง 2 (HDMI)",
+      image: { status: "pending" },
+    },
+    {
+      id: "smart-classroom-hdmi-4",
+      order: 4,
+      title: "ตรวจสอบภาพ",
+      instruction: "ตรวจสอบว่าภาพจากโน้ตบุ๊กขึ้นจอแล้ว",
       expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
+    {
+      id: "smart-classroom-hdmi-5",
+      order: 5,
+      title: "ตรวจสอบเสียง",
+      instruction: "หากเนื้อหาที่นำเสนอมีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
+      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
+      image: { status: "pending" },
+    },
   ],
-  troubleshootingIds: ["no-signal-on-display"],
+  troubleshootingIds: ["no-signal-on-display", "windows-pc-only-display"],
 };
 
 const smartClassroomWirelessShare: Workflow = {
   id: "smart-classroom-wireless-share",
   slug: "wireless-share",
-  title: "📡 แชร์หน้าจอแบบไร้สาย",
+  title: "📡 แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
+  shortDescription: "โน้ตบุ๊ก (Laptop) หรือ iPad — ผ่าน Crestron Wireless",
   icon: "Wifi",
+  osChoice: {
+    question: "คุณใช้อุปกรณ์อะไร?",
+    options: [
+      {
+        id: "windows",
+        label: "โน้ตบุ๊ก Windows",
+        steps: [
+          {
+            id: "smart-classroom-wireless-win-1",
+            order: 1,
+            title: "เชื่อมต่อ Wi-Fi",
+            instruction: "เชื่อมต่อ Wi-Fi ประจำห้อง",
+            statusTags: [{ kind: "wifi-required" }],
+            showRoomWifi: true,
+            image: { status: "pending" },
+          },
+          {
+            id: "smart-classroom-wireless-win-2",
+            order: 2,
+            title: "เชื่อมต่อจากโน้ตบุ๊ก",
+            instruction: "กด Win + K แล้วเลือกชื่อจอห้อง",
+            platformVariant: "windows",
+            keyboardShortcut: ["Win", "K"],
+            image: { status: "pending" },
+          },
+        ],
+      },
+      {
+        id: "mac",
+        label: "Mac หรือ iPad",
+        steps: [
+          {
+            id: "smart-classroom-wireless-mac-1",
+            order: 1,
+            title: "เชื่อมต่อ Wi-Fi",
+            instruction: "เชื่อมต่อ Wi-Fi ประจำห้อง",
+            statusTags: [{ kind: "wifi-required" }],
+            showRoomWifi: true,
+            image: { status: "pending" },
+          },
+          {
+            id: "smart-classroom-wireless-mac-2",
+            order: 2,
+            title: "เชื่อมต่อจาก Mac หรือ iPad",
+            instruction: "เปิด Control Center → Screen Mirroring แล้วเลือกชื่อจอห้อง",
+            platformVariant: "mac",
+            image: { status: "pending" },
+          },
+        ],
+      },
+    ],
+  },
   steps: [
-    {
-      id: "smart-classroom-wireless-1",
-      order: 1,
-      title: "แตะ Wireless บน Touchscreen",
-      instruction: "แตะปุ่ม Wireless บน Smart Touchscreen",
-      image: { status: "pending" },
-    },
-    {
-      id: "smart-classroom-wireless-2",
-      order: 2,
-      title: "เชื่อมต่อ Wi-Fi",
-      instruction: "เชื่อมต่อ Wi-Fi ประจำห้อง",
-      statusTags: [{ kind: "wifi-required" }],
-      image: { status: "pending" },
-    },
     {
       id: "smart-classroom-wireless-3",
       order: 3,
-      title: "เปิดการแชร์หน้าจอ",
-      instruction:
-        "Windows: กด Win + K   /   Mac หรือ iPad: เปิด Screen Mirroring",
-      platformVariant: "both",
-      keyboardShortcut: ["Win", "K"],
-      image: { status: "pending" },
-    },
-    {
-      id: "smart-classroom-wireless-4",
-      order: 4,
       title: "กรอก PIN Code",
       instruction:
         "กรอก PIN Code 4 หลักที่ปรากฏบนจอหลัก — PIN เปลี่ยนทุกครั้ง ไม่ใช่รหัสตายตัว",
       statusTags: [{ kind: "pin-required" }],
       expectedResult: "อุปกรณ์เชื่อมต่อและภาพปรากฏบนจอหลัก",
+      image: { status: "pending" },
+    },
+    {
+      id: "smart-classroom-wireless-4",
+      order: 4,
+      title: "ตรวจสอบเสียง",
+      instruction: "หากเนื้อหาที่แชร์มีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
+      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
       image: { status: "pending" },
     },
   ],
@@ -508,6 +785,7 @@ const room703SwitchRoomMode: Workflow = {
 // ---------------------------------------------------------------------------
 
 export const WORKFLOWS: Workflow[] = [
+  jongrakRoomPcPresentation,
   jongrakWebexRecording,
   jongrakPersonalScreenShare,
   floor6MeetingUseHdmi,

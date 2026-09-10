@@ -25,10 +25,17 @@ const mainConferenceRoom: RoomBase = {
   template: "conference",
   status: "pending",
   configuration: {
-    wifi: { status: "pending" },
+    wifi: {
+      status: "confirmed",
+      value: { ssid: "WL Present Meeting Room", password: "12345678" },
+    },
     displayName: { status: "pending" },
   },
-  workflowIds: ["jongrak-webex-recording", "jongrak-personal-screen-share"],
+  workflowIds: [
+    "jongrak-room-pc-presentation",
+    "jongrak-webex-recording",
+    "jongrak-personal-screen-share",
+  ],
   troubleshootingIds: [
     "wireless-device-not-found",
     "no-signal-on-display",
@@ -91,6 +98,22 @@ export const SMALL_CLASSROOM_NUMBERS = [
   "608",
 ] as const;
 
+/**
+ * Phase 7 §19 — verified Wi-Fi mapping per classroom. One SSID per room,
+ * one shared password. Confirmed business fact, not a guess.
+ */
+const SMALL_CLASSROOM_WIFI: Record<string, string> = {
+  "601": "KU Room 1",
+  "602": "KU Room 2",
+  "603": "KU Room 3",
+  "604": "KU Room 4",
+  "605": "KU Room 5",
+  "606": "KU Room 6",
+  "607": "KU Room 7",
+  "608": "KU Room 8",
+};
+const SMALL_CLASSROOM_WIFI_PASSWORD = "qwertyuiop";
+
 function createSmallClassroomRoom(roomNumber: string): RoomBase {
   return {
     id: `room-6-${roomNumber}`,
@@ -99,11 +122,17 @@ function createSmallClassroomRoom(roomNumber: string): RoomBase {
     number: roomNumber,
     name: `ห้องเรียน ${roomNumber}`,
     shortDescription:
-      "ห้องเรียนย่อย พร้อมคอมพิวเตอร์ประจำห้องและระบบไร้สายผ่าน Crestron",
+      "ห้องเรียนย่อย พร้อมคอมพิวเตอร์ประจำห้องและระบบไร้สาย (ไม่มีสาย HDMI ให้ผู้ใช้)",
     template: "small-classroom",
     status: "pending",
     configuration: {
-      wifi: { status: "pending" },
+      wifi: {
+        status: "confirmed",
+        value: {
+          ssid: SMALL_CLASSROOM_WIFI[roomNumber] ?? `KU Room ${roomNumber}`,
+          password: SMALL_CLASSROOM_WIFI_PASSWORD,
+        },
+      },
       displayName: { status: "pending" },
     },
     workflowIds: [
@@ -116,8 +145,13 @@ function createSmallClassroomRoom(roomNumber: string): RoomBase {
       "cannot-connect",
       "pin-not-showing",
       "device-not-responding",
+      "tv-input-changed-after-input-box",
     ],
-    overview: ["Input 1 = Room PC", "Input 2 = Crestron Wireless"],
+    overview: [
+      "คอมพิวเตอร์ประจำห้อง",
+      "ระบบไร้สาย (Wireless Presentation) สำหรับโน้ตบุ๊กและ iPad",
+      "ไม่มีสาย HDMI ให้ผู้ใช้ต่อโน้ตบุ๊ก — ใช้ Wireless เท่านั้น",
+    ],
   };
 }
 
@@ -131,6 +165,13 @@ const smallClassrooms: RoomBase[] = SMALL_CLASSROOM_NUMBERS.map(
 
 export const SMART_CLASSROOM_NUMBERS = ["701", "702"] as const;
 
+/** Phase 7 §29 — verified per-room Wi-Fi, one shared password. */
+const SMART_CLASSROOM_WIFI: Record<string, string> = {
+  "701": "smartclassroom701",
+  "702": "smartclassroom702",
+};
+const SMART_CLASSROOM_WIFI_PASSWORD = "qwertyuiop";
+
 function createSmartClassroomRoom(roomNumber: string): RoomBase {
   return {
     id: `room-7-${roomNumber}`,
@@ -143,7 +184,13 @@ function createSmartClassroomRoom(roomNumber: string): RoomBase {
     template: "smart-classroom",
     status: "pending",
     configuration: {
-      wifi: { status: "pending" },
+      wifi: {
+        status: "confirmed",
+        value: {
+          ssid: SMART_CLASSROOM_WIFI[roomNumber] ?? `smartclassroom${roomNumber}`,
+          password: SMART_CLASSROOM_WIFI_PASSWORD,
+        },
+      },
       displayName: { status: "pending" },
     },
     workflowIds: [
@@ -157,11 +204,13 @@ function createSmartClassroomRoom(roomNumber: string): RoomBase {
       "cannot-connect",
       "pin-not-showing",
       "device-not-responding",
+      "windows-pc-only-display",
+      "room-pc-no-audio",
     ],
     overview: [
-      "Input 1 = Room PC",
-      "Input 2 = HDMI (โน้ตบุ๊ก)",
-      "Input 3 = Crestron Wireless",
+      "ช่อง 1 = คอมพิวเตอร์ประจำห้อง",
+      "ช่อง 2 = ต่อโน้ตบุ๊ก (Laptop) ด้วยสาย HDMI",
+      "ช่อง 3 = แชร์หน้าจอแบบไร้สาย",
     ],
   };
 }

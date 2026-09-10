@@ -3,7 +3,8 @@ import { KeyboardShortcut } from "@/components/guide/keyboard-shortcut";
 import { ExpectedResult } from "@/components/guide/expected-result";
 import { StatusTagList } from "@/components/guide/status-tag-list";
 import { CriticalWarning } from "@/components/guide/critical-warning";
-import type { GuideStep } from "@/lib/types";
+import { RoomWifiInfo } from "@/components/guide/room-wifi-info";
+import type { GuideStep, Room } from "@/lib/types";
 
 const PLATFORM_LABEL: Record<string, string> = {
   windows: "Windows",
@@ -11,7 +12,7 @@ const PLATFORM_LABEL: Record<string, string> = {
   both: "",
 };
 
-export function GuideStepCard({ step }: { step: GuideStep }) {
+export function GuideStepCard({ step, room }: { step: GuideStep; room?: Room }) {
   const platformLabel = step.platformVariant
     ? PLATFORM_LABEL[step.platformVariant]
     : "";
@@ -27,6 +28,7 @@ export function GuideStepCard({ step }: { step: GuideStep }) {
       </div>
 
       <StatusTagList tags={step.statusTags} />
+      {step.showRoomWifi && room && <RoomWifiInfo room={room} />}
       <KeyboardShortcut keys={step.keyboardShortcut} />
       <GuideImage image={step.image} />
       {step.warning && <CriticalWarning warning={step.warning} />}

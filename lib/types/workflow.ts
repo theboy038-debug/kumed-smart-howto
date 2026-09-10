@@ -31,6 +31,14 @@ export interface GuideStep {
   statusTags?: StatusTag[];
   /** IDs into troubleshooting.ts relevant specifically to this step. */
   troubleshootingIds?: string[];
+  /**
+   * Phase 7 §10/§19/§29 — when true, this step shows the room's real
+   * Wi-Fi SSID/password (via the room's confirmed `configuration.wifi`
+   * Fact) instead of just the generic "wifi-required" tag. Pure UI
+   * flag — the actual SSID/password always comes from data, never from
+   * this component.
+   */
+  showRoomWifi?: boolean;
 }
 
 export interface Workflow {
@@ -58,4 +66,44 @@ export interface Workflow {
    * never invented for this field alone.
    */
   commonMistake?: string;
+  /**
+   * Phase 7 §11/§18/§30 — some wireless flows must ask the user's device
+   * type ONCE, up front, then show only that device's steps (never both
+   * mixed in one step). When present, GuidedWorkflow shows this question
+   * before any of `steps`, then prepends the chosen option's steps to
+   * `steps` — so `steps` holds whatever is common to both devices
+   * (e.g. "ตรวจสอบภาพ", "ตรวจสอบเสียง"), and each option holds only its
+   * own device-specific connection steps. Optional and additive: a
+   * workflow with no osChoice behaves exactly as before.
+   */
+  osChoice?: {
+    question: string;
+    options: { id: "windows" | "mac"; label: string; steps: GuideStep[] }[];
+  };
+  /**
+   * Phase 7 v3 §7–§11 — some flows have genuinely different SHARING
+   * METHODS (not just OS differences), e.g. "Wireless Dongle" vs
+   * "Wi-Fi". Ask which method up front; each method may optionally ask
+   * device type afterward via its own `osChoice`. A method can also
+   * name a `fallbackMethodId` — shown as a calm "try this instead"
+   * prompt after its last step, not routed through error-style
+   * troubleshooting (§11, §34).
+   */
+  methodChoice?: {
+    question: string;
+    options: {
+      id: string;
+      label: string;
+      description?: string;
+      /** e.g. "⭐ แนะนำสำหรับ Mac" — a suggestion, never an exclusivity claim (§9). */
+      badge?: string;
+      steps?: GuideStep[];
+      osChoice?: {
+        question: string;
+        options: { id: "windows" | "mac"; label: string; steps: GuideStep[] }[];
+      };
+      fallbackMethodId?: string;
+      fallbackPrompt?: string;
+    }[];
+  };
 }

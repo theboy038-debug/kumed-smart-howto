@@ -22,14 +22,50 @@ export function GuidedWorkflow({
   room: Room;
   workflow: Workflow;
 }) {
+  const [methodId, setMethodId] = useState<string | null>(null);
+  const [osChoiceId, setOsChoiceId] = useState<"windows" | "mac" | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  const totalSteps = workflow.steps.length;
-  const step = workflow.steps[stepIndex];
+  // Phase 7 v3 §7–§11 — some flows have distinct SHARING METHODS (e.g.
+  // Wireless Dongle vs Wi-Fi), asked before anything else. Each method
+  // may then ask device type via its own osChoice. A workflow with
+  // neither field behaves exactly as it always has.
+  const needsMethodChoice = !!workflow.methodChoice;
+  const selectedMethod = workflow.methodChoice?.options.find((o) => o.id === methodId);
+  const awaitingMethodChoice = needsMethodChoice && !selectedMethod;
+
+  const activeOsChoice = selectedMethod?.osChoice ?? (!needsMethodChoice ? workflow.osChoice : undefined);
+  const selectedOsOption = activeOsChoice?.options.find((o) => o.id === osChoiceId);
+  const awaitingOsChoice = !awaitingMethodChoice && !!activeOsChoice && !selectedOsOption;
+
+  const baseSteps = needsMethodChoice ? selectedMethod?.steps ?? [] : workflow.steps;
+  const effectiveSteps = selectedOsOption ? [...selectedOsOption.steps, ...baseSteps] : baseSteps;
+
+  const totalSteps = effectiveSteps.length;
+  const step = effectiveSteps[stepIndex];
   const isLastStep = stepIndex === totalSteps - 1;
+  const showingSteps = !awaitingMethodChoice && !awaitingOsChoice && !!step;
+
+  function goBack() {
+    if (stepIndex > 0) {
+      setStepIndex((i) => i - 1);
+    } else if (activeOsChoice) {
+      setOsChoiceId(null);
+    } else if (needsMethodChoice) {
+      setMethodId(null);
+    }
+  }
+  const canGoBack = stepIndex > 0 || !!activeOsChoice || needsMethodChoice;
+
+  function switchToMethod(id: string) {
+    setMethodId(id);
+    setOsChoiceId(null);
+    setStepIndex(0);
+    setCompleted(false);
+  }
 
   const workflowIssues = (workflow.troubleshootingIds ?? [])
     .map(getTroubleshootingById)
@@ -44,7 +80,7 @@ export function GuidedWorkflow({
         subtitle={room.name}
         backHref={backHref}
         rightSlot={
-          !completed && totalSteps > 0 ? (
+          !completed && showingSteps && totalSteps > 0 ? (
             <StepProgress current={stepIndex + 1} total={totalSteps} />
           ) : undefined
         }
@@ -57,7 +93,7 @@ export function GuidedWorkflow({
 
         {!completed && <CommonMistakeNote text={workflow.commonMistake} />}
 
-        {!completed && workflow.prerequisites && workflow.prerequisites.length > 0 && (
+        {!completed && showingSteps && workflow.prerequisites && workflow.prerequisites.length > 0 && (
           <ul className="flex flex-col gap-1 rounded-2xl border border-border bg-surface-elevated p-4 text-sm text-muted">
             {workflow.prerequisites.map((p, i) => (
               <li key={i}>• {p}</li>
@@ -65,9 +101,70 @@ export function GuidedWorkflow({
           </ul>
         )}
 
+        {/* Sharing-method question — e.g. "เลือกวิธีแชร์หน้าจอ" (Dongle vs Wi-Fi). */}
+        {!completed && awaitingMethodChoice && workflow.methodChoice && (
+          <div className="flex flex-col gap-3">
+            <p className="text-lg font-medium">{workflow.methodChoice.question}</p>
+            <div className="flex flex-col gap-3">
+              {workflow.methodChoice.options.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => switchToMethod(option.id)}
+                  className="flex min-h-[44px] flex-col gap-1 rounded-2xl border border-border bg-surface p-4 text-left transition-colors hover:bg-surface-elevated focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  <span className="flex items-center gap-2 font-medium">
+                    {option.label}
+                    {option.badge && (
+                      <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                        {option.badge}
+                      </span>
+                    )}
+                  </span>
+                  {option.description && (
+                    <span className="text-sm text-muted">{option.description}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Device-type question — asked once per method, before its steps. */}
+        {!completed && !awaitingMethodChoice && awaitingOsChoice && activeOsChoice && (
+          <div className="flex flex-col gap-3">
+            <p className="text-lg font-medium">{activeOsChoice.question}</p>
+            <div className="flex flex-col gap-3">
+              {activeOsChoice.options.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => {
+                    setOsChoiceId(option.id);
+                    setStepIndex(0);
+                  }}
+                  className="min-h-[44px] rounded-2xl border border-border bg-surface p-4 text-left font-medium transition-colors hover:bg-surface-elevated focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {needsMethodChoice && (
+              <button
+                type="button"
+                onClick={() => setMethodId(null)}
+                className="flex min-h-[44px] items-center gap-1 self-start text-sm text-muted"
+              >
+                <Icon name="ChevronLeft" className="h-4 w-4" />
+                เปลี่ยนวิธีแชร์หน้าจอ
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Defensive empty state — current data always has ≥1 step, but a
             future authoring mistake must not render a blank page (§15). */}
-        {!completed && totalSteps === 0 && (
+        {!completed && !awaitingMethodChoice && !awaitingOsChoice && totalSteps === 0 && (
           <div className="flex flex-col gap-4">
             <p className="rounded-2xl border border-border bg-surface p-4 text-sm text-muted">
               คู่มือนี้กำลังจัดเตรียม หากต้องการความช่วยเหลือ กรุณาติดต่อ IT Support
@@ -77,7 +174,7 @@ export function GuidedWorkflow({
         )}
 
         {/* aria-live announces the new step's content to screen readers on Next/Back */}
-        {!completed && step && (
+        {!completed && showingSteps && step && (
           <div aria-live="polite">
             <AnimatePresence mode="wait">
               <motion.div
@@ -87,15 +184,15 @@ export function GuidedWorkflow({
                 exit={shouldReduceMotion ? undefined : { opacity: 0, x: -12 }}
                 transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: "easeOut" }}
               >
-                <GuideStepCard step={step} />
+                <GuideStepCard step={step} room={room} />
               </motion.div>
             </AnimatePresence>
 
             <div className="mt-4 flex gap-3">
               <button
                 type="button"
-                onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
-                disabled={stepIndex === 0}
+                onClick={goBack}
+                disabled={!canGoBack}
                 className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-full border border-border py-3 text-sm font-medium text-muted transition-colors hover:bg-surface-elevated disabled:opacity-40"
               >
                 <Icon name="ChevronLeft" className="h-4 w-4" />
@@ -112,6 +209,18 @@ export function GuidedWorkflow({
                 {!isLastStep && <Icon name="ChevronRight" className="h-4 w-4" />}
               </button>
             </div>
+
+            {/* Calm "try a different method" CTA — not routed through
+                error-style troubleshooting (Phase 7 v3 §11, §34). */}
+            {isLastStep && selectedMethod?.fallbackMethodId && (
+              <button
+                type="button"
+                onClick={() => switchToMethod(selectedMethod.fallbackMethodId!)}
+                className="mt-3 flex min-h-[44px] w-full items-center justify-center rounded-2xl border border-accent/30 bg-accent/10 text-sm font-medium text-accent"
+              >
+                {selectedMethod.fallbackPrompt ?? "ลองวิธีอื่นแทน"}
+              </button>
+            )}
 
             <button
               type="button"
@@ -148,6 +257,8 @@ export function GuidedWorkflow({
               <button
                 type="button"
                 onClick={() => {
+                  setMethodId(null);
+                  setOsChoiceId(null);
                   setStepIndex(0);
                   setCompleted(false);
                 }}
