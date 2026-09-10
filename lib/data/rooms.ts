@@ -205,7 +205,6 @@ function createSmartClassroomRoom(roomNumber: string): RoomBase {
       "pin-not-showing",
       "device-not-responding",
       "windows-pc-only-display",
-      "room-pc-no-audio",
     ],
     overview: [
       "ช่อง 1 = คอมพิวเตอร์ประจำห้อง",

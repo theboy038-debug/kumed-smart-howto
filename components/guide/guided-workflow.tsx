@@ -13,7 +13,7 @@ import { StepProgress } from "@/components/guide/step-progress";
 import { TroubleshootingSection } from "@/components/troubleshooting/troubleshooting-section";
 import { Icon } from "@/components/ui/icon";
 import { getTroubleshootingById } from "@/lib/utils";
-import type { Room, Workflow } from "@/lib/types";
+import type { GuideStep, Room, Workflow } from "@/lib/types";
 
 export function GuidedWorkflow({
   room,
@@ -23,6 +23,7 @@ export function GuidedWorkflow({
   workflow: Workflow;
 }) {
   const [methodId, setMethodId] = useState<string | null>(null);
+  const [beforeIndex, setBeforeIndex] = useState(0);
   const [osChoiceId, setOsChoiceId] = useState<"windows" | "mac" | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [completed, setCompleted] = useState(false);
@@ -37,35 +38,72 @@ export function GuidedWorkflow({
   const selectedMethod = workflow.methodChoice?.options.find((o) => o.id === methodId);
   const awaitingMethodChoice = needsMethodChoice && !selectedMethod;
 
+  // Phase 8 §3–§9 — control-box prep ("ตรวจกล่องควบคุม → Input/Audio =
+  // ช่อง N") shown before the OS question or main steps, per method (or
+  // at the workflow level for plain osChoice workflows like Floor 6/7
+  // wireless). Not every workflow has this — most don't.
+  const beforeSteps: GuideStep[] = needsMethodChoice
+    ? selectedMethod?.beforeSteps ?? []
+    : workflow.beforeSteps ?? [];
+  const awaitingBeforeSteps =
+    !awaitingMethodChoice && beforeSteps.length > 0 && beforeIndex < beforeSteps.length;
+
   const activeOsChoice = selectedMethod?.osChoice ?? (!needsMethodChoice ? workflow.osChoice : undefined);
   const selectedOsOption = activeOsChoice?.options.find((o) => o.id === osChoiceId);
-  const awaitingOsChoice = !awaitingMethodChoice && !!activeOsChoice && !selectedOsOption;
+  const awaitingOsChoice =
+    !awaitingMethodChoice && !awaitingBeforeSteps && !!activeOsChoice && !selectedOsOption;
 
-  const baseSteps = needsMethodChoice ? selectedMethod?.steps ?? [] : workflow.steps;
-  const effectiveSteps = selectedOsOption ? [...selectedOsOption.steps, ...baseSteps] : baseSteps;
+  const mainSteps = needsMethodChoice ? selectedMethod?.steps ?? [] : workflow.steps;
+  const effectiveSteps = selectedOsOption ? [...selectedOsOption.steps, ...mainSteps] : mainSteps;
 
   const totalSteps = effectiveSteps.length;
   const step = effectiveSteps[stepIndex];
   const isLastStep = stepIndex === totalSteps - 1;
-  const showingSteps = !awaitingMethodChoice && !awaitingOsChoice && !!step;
-
-  function goBack() {
-    if (stepIndex > 0) {
-      setStepIndex((i) => i - 1);
-    } else if (activeOsChoice) {
-      setOsChoiceId(null);
-    } else if (needsMethodChoice) {
-      setMethodId(null);
-    }
-  }
-  const canGoBack = stepIndex > 0 || !!activeOsChoice || needsMethodChoice;
+  const showingSteps = !awaitingMethodChoice && !awaitingBeforeSteps && !awaitingOsChoice && !!step;
+  const beforeStep = beforeSteps[beforeIndex];
+  const isLastBeforeStep = beforeIndex === beforeSteps.length - 1;
 
   function switchToMethod(id: string) {
     setMethodId(id);
+    setBeforeIndex(0);
     setOsChoiceId(null);
     setStepIndex(0);
     setCompleted(false);
   }
+
+  function goBack() {
+    if (showingSteps) {
+      if (stepIndex > 0) {
+        setStepIndex((i) => i - 1);
+      } else if (activeOsChoice) {
+        setOsChoiceId(null);
+      } else if (beforeSteps.length > 0) {
+        setBeforeIndex(beforeSteps.length - 1);
+      } else if (needsMethodChoice) {
+        setMethodId(null);
+      }
+      return;
+    }
+    if (awaitingOsChoice) {
+      if (beforeSteps.length > 0) {
+        setBeforeIndex(beforeSteps.length - 1);
+      } else if (needsMethodChoice) {
+        setMethodId(null);
+      }
+      return;
+    }
+    if (awaitingBeforeSteps) {
+      if (beforeIndex > 0) {
+        setBeforeIndex((i) => i - 1);
+      } else if (needsMethodChoice) {
+        setMethodId(null);
+      }
+    }
+  }
+  const canGoBack =
+    (showingSteps && (stepIndex > 0 || !!activeOsChoice || beforeSteps.length > 0 || needsMethodChoice)) ||
+    (awaitingOsChoice && (beforeSteps.length > 0 || needsMethodChoice)) ||
+    (awaitingBeforeSteps && (beforeIndex > 0 || needsMethodChoice));
 
   const workflowIssues = (workflow.troubleshootingIds ?? [])
     .map(getTroubleshootingById)
@@ -130,8 +168,45 @@ export function GuidedWorkflow({
           </div>
         )}
 
+        {/* Control-box prep steps — "ตรวจกล่องควบคุม → Input/Audio = ช่อง N". */}
+        {!completed && awaitingBeforeSteps && beforeStep && (
+          <div aria-live="polite">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={beforeStep.id}
+                initial={shouldReduceMotion ? undefined : { opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={shouldReduceMotion ? undefined : { opacity: 0, x: -12 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: "easeOut" }}
+              >
+                <GuideStepCard step={beforeStep} room={room} />
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="mt-4 flex gap-3">
+              <button
+                type="button"
+                onClick={goBack}
+                disabled={!canGoBack}
+                className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-full border border-border py-3 text-sm font-medium text-muted transition-colors hover:bg-surface-elevated disabled:opacity-40"
+              >
+                <Icon name="ChevronLeft" className="h-4 w-4" />
+                ย้อนกลับ
+              </button>
+              <button
+                type="button"
+                onClick={() => setBeforeIndex((i) => i + 1)}
+                className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-full bg-accent py-3 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+              >
+                {isLastBeforeStep ? "พร้อมแล้ว" : "ถัดไป"}
+                <Icon name="ChevronRight" className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Device-type question — asked once per method, before its steps. */}
-        {!completed && !awaitingMethodChoice && awaitingOsChoice && activeOsChoice && (
+        {!completed && !awaitingMethodChoice && !awaitingBeforeSteps && awaitingOsChoice && activeOsChoice && (
           <div className="flex flex-col gap-3">
             <p className="text-lg font-medium">{activeOsChoice.question}</p>
             <div className="flex flex-col gap-3">
@@ -149,22 +224,20 @@ export function GuidedWorkflow({
                 </button>
               ))}
             </div>
-            {needsMethodChoice && (
-              <button
-                type="button"
-                onClick={() => setMethodId(null)}
-                className="flex min-h-[44px] items-center gap-1 self-start text-sm text-muted"
-              >
-                <Icon name="ChevronLeft" className="h-4 w-4" />
-                เปลี่ยนวิธีแชร์หน้าจอ
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={goBack}
+              className="flex min-h-[44px] items-center gap-1 self-start text-sm text-muted"
+            >
+              <Icon name="ChevronLeft" className="h-4 w-4" />
+              ย้อนกลับ
+            </button>
           </div>
         )}
 
         {/* Defensive empty state — current data always has ≥1 step, but a
             future authoring mistake must not render a blank page (§15). */}
-        {!completed && !awaitingMethodChoice && !awaitingOsChoice && totalSteps === 0 && (
+        {!completed && !awaitingMethodChoice && !awaitingBeforeSteps && !awaitingOsChoice && totalSteps === 0 && (
           <div className="flex flex-col gap-4">
             <p className="rounded-2xl border border-border bg-surface p-4 text-sm text-muted">
               คู่มือนี้กำลังจัดเตรียม หากต้องการความช่วยเหลือ กรุณาติดต่อ IT Support
@@ -258,6 +331,7 @@ export function GuidedWorkflow({
                 type="button"
                 onClick={() => {
                   setMethodId(null);
+                  setBeforeIndex(0);
                   setOsChoiceId(null);
                   setStepIndex(0);
                   setCompleted(false);

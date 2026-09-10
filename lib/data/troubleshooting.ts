@@ -150,23 +150,4 @@ export const TROUBLESHOOTING_ISSUES: TroubleshootingIssue[] = [
     ],
     escalationMessage: "หากภาพยังไม่ขึ้น กรุณาติดต่อ IT Support",
   },
-  {
-    id: "room-pc-no-audio",
-    problem: "ใช้คอมพิวเตอร์ประจำห้องแล้วไม่มีเสียง",
-    category: "general",
-    symptoms: [
-      "ปัญหาอาจอยู่ที่การตั้งค่าเสียงของคอมพิวเตอร์ ไม่จำเป็นต้องหมายความว่าระบบห้องมีปัญหา",
-    ],
-    quickFixes: [
-      {
-        instruction: "ตรวจสอบว่าไม่ได้ปิดเสียง (Mute) ไว้บนคอมพิวเตอร์ประจำห้อง",
-        expectedResult: "ไอคอนเสียงบนคอมพิวเตอร์แสดงว่าไม่ได้ปิดเสียง",
-      },
-      {
-        instruction: "ตรวจสอบว่าเลือกลำโพงของระบบห้องเป็นอุปกรณ์เสียงหลัก (Output) แล้ว",
-        expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
-      },
-    ],
-    escalationMessage: "หากยังไม่มีเสียง กรุณาติดต่อ IT Support",
-  },
 ];

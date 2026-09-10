@@ -7,10 +7,59 @@
  * exist (Bible §10, §32).
  */
 
-import type { Workflow } from "@/lib/types";
+import type { GuideStep, Workflow } from "@/lib/types";
+
+/**
+ * Phase 8 addendum §1–§2 — Windows AUDIO OUTPUT CHECK (Ctrl+Win+V),
+ * distinct from a room's physical AUDIO SWITCH (a control-box channel
+ * that only Floor 5 has). This check applies to any Windows-driven
+ * source that plays audio, regardless of whether the room's control
+ * box has an audio switch.
+ */
+function windowsAudioOutputCheckStep(id: string, order: number): GuideStep {
+  return {
+    id,
+    order,
+    title: "ตรวจสอบเสียง",
+    instruction:
+      'กด "Ctrl + Win + V" แล้วเลือกอุปกรณ์เสียงออก (Output) ของระบบห้องให้ถูกต้อง จากนั้นเปิดวิดีโอหรือไฟล์ที่มีเสียงเพื่อทดสอบ',
+    keyboardShortcut: ["Ctrl", "Win", "V"],
+    expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดสื่อที่มีเสียง",
+    image: { status: "pending" },
+  };
+}
+
+/**
+ * For flows that aren't Windows-only (Dongle, Mac/iPad branches) — the
+ * Ctrl+Win+V shortcut is Windows-specific and must not be presented as
+ * if it applies to Mac (no verified Mac-equivalent shortcut exists in
+ * the source data, so none is invented here).
+ */
+function genericAudioOutputCheckStep(id: string, order: number): GuideStep {
+  return {
+    id,
+    order,
+    title: "ตรวจสอบเสียง",
+    instruction:
+      "ตรวจสอบว่าเสียงออกจากระบบห้อง (บน Windows: กด Ctrl + Win + V แล้วเลือกอุปกรณ์เสียงออกที่ถูกต้อง) จากนั้นเปิดสื่อที่มีเสียงเพื่อทดสอบ",
+    expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดสื่อที่มีเสียง",
+    image: { status: "pending" },
+  };
+}
+
+function macAudioOutputCheckStep(id: string, order: number): GuideStep {
+  return {
+    id,
+    order,
+    title: "ตรวจสอบเสียง",
+    instruction: "ตรวจสอบว่าเสียงออกจากระบบห้องแล้ว โดยเปิดวิดีโอหรือไฟล์ที่มีเสียงเพื่อทดสอบ",
+    expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดสื่อที่มีเสียง",
+    image: { status: "pending" },
+  };
+}
 
 // ---------------------------------------------------------------------------
-// Floor 5 — Jongrak (Bible §18, §24–§26; Phase 7 §3–§11)
+// Floor 5 — Jongrak (Bible §18, §24–§26; Phase 7 §3–§11; Phase 8 §3–§7)
 // ---------------------------------------------------------------------------
 
 const jongrakRoomPcPresentation: Workflow = {
@@ -20,6 +69,24 @@ const jongrakRoomPcPresentation: Workflow = {
   shortDescription:
     "ใช้คอมพิวเตอร์ที่อยู่ในห้องเพื่อเปิด PowerPoint, PDF เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
   icon: "Monitor",
+  beforeSteps: [
+    {
+      id: "jongrak-pc-before-1",
+      order: 1,
+      title: "ตรวจกล่องควบคุม",
+      instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — ถ้าใช้คอมพิวเตอร์ประจำห้อง ให้เลือกช่อง 1 (Input 1)",
+      expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 (ภาพ) แล้ว",
+      image: { status: "pending" },
+    },
+    {
+      id: "jongrak-pc-before-2",
+      order: 2,
+      title: "ตรวจช่องเสียง",
+      instruction: "ตรวจช่องเสียงที่กล่องควบคุมให้เป็นช่อง 1 เพื่อให้เสียงมาจากคอมพิวเตอร์ประจำห้อง",
+      expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 1 แล้ว",
+      image: { status: "pending" },
+    },
+  ],
   steps: [
     {
       id: "jongrak-pc-1",
@@ -36,16 +103,17 @@ const jongrakRoomPcPresentation: Workflow = {
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอ",
       image: { status: "pending" },
     },
+    windowsAudioOutputCheckStep("jongrak-pc-audio", 3),
     {
       id: "jongrak-pc-3",
-      order: 3,
+      order: 4,
       title: "เปิดเนื้อหาที่ต้องการนำเสนอ",
       instruction: "เปิดไฟล์หรือโปรแกรมที่ต้องการนำเสนอ เช่น PowerPoint, PDF หรือเว็บไซต์",
       image: { status: "pending" },
     },
     {
       id: "jongrak-pc-4",
-      order: 4,
+      order: 5,
       title: "เริ่มนำเสนอ",
       instruction: "เริ่มนำเสนอเนื้อหาของคุณได้เลย",
       image: { status: "pending" },
@@ -66,6 +134,24 @@ const jongrakWebexRecording: Workflow = {
     message:
       "ห้ามกดเปลี่ยนช่องบน Mini Monitor ต้องคงไว้ที่ IN 1 เสมอ เพื่อให้ระบบ Webex บันทึกภาพบรรยากาศภายในห้องประชุมได้อย่างถูกต้อง",
   },
+  beforeSteps: [
+    {
+      id: "jongrak-webex-before-1",
+      order: 1,
+      title: "ตรวจกล่องควบคุม",
+      instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — เลือกช่อง 1 (Input 1) สำหรับคอมพิวเตอร์ประจำห้อง",
+      expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 (ภาพ) แล้ว",
+      image: { status: "pending" },
+    },
+    {
+      id: "jongrak-webex-before-2",
+      order: 2,
+      title: "ตรวจช่องเสียง",
+      instruction: "ตรวจช่องเสียงที่กล่องควบคุมให้เป็นช่อง 1",
+      expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 1 แล้ว",
+      image: { status: "pending" },
+    },
+  ],
   steps: [
     {
       id: "jongrak-webex-1",
@@ -75,9 +161,27 @@ const jongrakWebexRecording: Workflow = {
       expectedResult: "โปรแกรม Webex พร้อมสำหรับเข้าร่วมการประชุม",
       image: { status: "pending" },
     },
+    windowsAudioOutputCheckStep("jongrak-webex-audio-windows", 2),
+    {
+      id: "jongrak-webex-audio-speaker",
+      order: 3,
+      title: "ทดสอบเสียงใน Webex (Speaker)",
+      instruction:
+        "เข้าเมนูตั้งค่า Audio ในโปรแกรม Webex เลือก Speaker / เสียงออก แล้วกด Test Speaker",
+      expectedResult: "ได้ยินเสียงทดสอบจากระบบห้อง",
+      image: { status: "pending" },
+    },
+    {
+      id: "jongrak-webex-audio-mic",
+      order: 4,
+      title: "ทดสอบไมโครโฟนใน Webex",
+      instruction: "ในหน้าเดียวกัน เลือก Microphone / ไมโครโฟน แล้วกด Test Microphone",
+      expectedResult: "เห็นแถบระดับเสียงตอบสนองเมื่อพูด",
+      image: { status: "pending" },
+    },
     {
       id: "jongrak-webex-2",
-      order: 2,
+      order: 5,
       title: "เริ่มบันทึกวิดีโอ",
       instruction: "กดปุ่ม Record ภายใน Webex เพื่อเริ่มบันทึกวิดีโอ",
       expectedResult: "สถานะการบันทึกแสดงว่าระบบกำลังบันทึก",
@@ -85,7 +189,7 @@ const jongrakWebexRecording: Workflow = {
     },
     {
       id: "jongrak-webex-3",
-      order: 3,
+      order: 6,
       title: "แชร์สไลด์หรือหน้าจอ",
       instruction:
         "หากต้องการแชร์สไลด์หรือหน้าจอ ให้กดปุ่ม Share ภายในโปรแกรม Webex เท่านั้น — ห้ามเปลี่ยนช่องสัญญาณของ Mini Monitor",
@@ -111,6 +215,24 @@ const jongrakPersonalScreenShare: Workflow = {
         description: "เสียบอุปกรณ์ที่ให้มาเข้ากับโน้ตบุ๊ก แล้วกดปุ่ม Share เพื่อส่งภาพขึ้นจอ",
         fallbackMethodId: "wifi",
         fallbackPrompt: "ภาพยังไม่ขึ้น? ลองเชื่อมต่อผ่าน Wi-Fi แทน",
+        beforeSteps: [
+          {
+            id: "jongrak-dongle-before-1",
+            order: 1,
+            title: "ตรวจกล่องควบคุม",
+            instruction: "ตรวจที่กล่องควบคุมก่อนว่าเลือกช่อง 2 (Input 2) สำหรับ Wireless",
+            expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 (ภาพ) แล้ว",
+            image: { status: "pending" },
+          },
+          {
+            id: "jongrak-dongle-before-2",
+            order: 2,
+            title: "ตรวจช่องเสียง",
+            instruction: "ตรวจช่องเสียงให้เป็นช่อง 2 เพื่อให้เสียงมาจากอุปกรณ์ Wireless",
+            expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 2 แล้ว",
+            image: { status: "pending" },
+          },
+        ],
         steps: [
           {
             id: "jongrak-dongle-1",
@@ -141,6 +263,7 @@ const jongrakPersonalScreenShare: Workflow = {
             expectedResult: "ภาพจากโน้ตบุ๊กควรแสดงบนจอห้อง",
             image: { status: "pending" },
           },
+          genericAudioOutputCheckStep("jongrak-dongle-audio", 5),
         ],
       },
       {
@@ -148,6 +271,24 @@ const jongrakPersonalScreenShare: Workflow = {
         label: "แชร์ผ่าน Wi-Fi",
         badge: "แนะนำสำหรับ Mac",
         description: "เชื่อมต่อ Wi-Fi ของห้อง แล้วแชร์หน้าจอจากอุปกรณ์ของคุณ",
+        beforeSteps: [
+          {
+            id: "jongrak-wifi-before-1",
+            order: 1,
+            title: "ตรวจกล่องควบคุม",
+            instruction: "ตรวจกล่องควบคุมให้เลือกช่อง 2 (Input 2) สำหรับ Wireless",
+            expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 (ภาพ) แล้ว",
+            image: { status: "pending" },
+          },
+          {
+            id: "jongrak-wifi-before-2",
+            order: 2,
+            title: "ตรวจช่องเสียง",
+            instruction: "ตรวจช่องเสียงให้เป็นช่อง 2 เพื่อให้เสียงมาจากอุปกรณ์ Wireless",
+            expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 2 แล้ว",
+            image: { status: "pending" },
+          },
+        ],
         osChoice: {
           question: "คุณใช้อุปกรณ์อะไร?",
           options: [
@@ -173,6 +314,15 @@ const jongrakPersonalScreenShare: Workflow = {
                   keyboardShortcut: ["Win", "K"],
                   image: { status: "pending" },
                 },
+                {
+                  id: "jongrak-wifi-win-3",
+                  order: 3,
+                  title: "ตรวจสอบภาพ",
+                  instruction: "ตรวจสอบว่าภาพจากโน้ตบุ๊กขึ้นจอแล้ว",
+                  expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอ",
+                  image: { status: "pending" },
+                },
+                windowsAudioOutputCheckStep("jongrak-wifi-win-audio", 4),
               ],
             },
             {
@@ -196,20 +346,20 @@ const jongrakPersonalScreenShare: Workflow = {
                   platformVariant: "mac",
                   image: { status: "pending" },
                 },
+                {
+                  id: "jongrak-wifi-mac-3",
+                  order: 3,
+                  title: "ตรวจสอบภาพ",
+                  instruction: "ตรวจสอบว่าภาพจาก Mac หรือ iPad ขึ้นจอแล้ว",
+                  expectedResult: "ภาพจากอุปกรณ์ของคุณปรากฏบนจอ",
+                  image: { status: "pending" },
+                },
+                macAudioOutputCheckStep("jongrak-wifi-mac-audio", 4),
               ],
             },
           ],
         },
-        steps: [
-          {
-            id: "jongrak-wifi-3",
-            order: 3,
-            title: "ตรวจสอบภาพ",
-            instruction: "ตรวจสอบว่าภาพจากอุปกรณ์ของคุณขึ้นจอแล้ว",
-            expectedResult: "ภาพจากโน้ตบุ๊กหรือ iPad ปรากฏบนจอ",
-            image: { status: "pending" },
-          },
-        ],
+        steps: [],
       },
     ],
   },
@@ -264,6 +414,18 @@ const smallClassroomUseRoomPc: Workflow = {
     message:
       "ในบางห้อง เมื่อกดปุ่มที่กล่องควบคุมสัญญาณ TV อาจเปลี่ยนไปช่องอื่นอัตโนมัติ หากภาพหาย ให้ใช้รีโมท TV เลือกกลับไปยังช่อง HDMI ที่เชื่อมต่อกับระบบห้อง",
   },
+  // Phase 8 §2 — Floor 6's control box has ONLY an image Input switch,
+  // no audio switch. Do not add an audio-channel step here.
+  beforeSteps: [
+    {
+      id: "small-classroom-pc-before-1",
+      order: 1,
+      title: "ตรวจกล่องควบคุม",
+      instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — ถ้าใช้คอมพิวเตอร์ประจำห้อง ให้เลือกช่อง 1 (Input 1)",
+      expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 แล้ว",
+      image: { status: "pending" },
+    },
+  ],
   steps: [
     {
       id: "small-classroom-pc-1",
@@ -288,19 +450,12 @@ const smallClassroomUseRoomPc: Workflow = {
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
+    windowsAudioOutputCheckStep("small-classroom-pc-audio", 4),
     {
       id: "small-classroom-pc-4",
-      order: 4,
+      order: 5,
       title: "ใช้คอมพิวเตอร์นำเสนอ",
       instruction: "เปิด PowerPoint, PDF, เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
-      image: { status: "pending" },
-    },
-    {
-      id: "small-classroom-pc-5",
-      order: 5,
-      title: "ตรวจสอบเสียง",
-      instruction: "หากเนื้อหาที่นำเสนอมีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
-      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
       image: { status: "pending" },
     },
   ],
@@ -313,6 +468,17 @@ const smallClassroomWirelessShare: Workflow = {
   title: "📡 แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
   shortDescription: "โน้ตบุ๊ก (Laptop) หรือ iPad — ผ่านระบบไร้สายเท่านั้น",
   icon: "Wifi",
+  // Phase 8 §2 — Input only, no audio switch on this floor's control box.
+  beforeSteps: [
+    {
+      id: "small-classroom-wireless-before-1",
+      order: 1,
+      title: "ตรวจกล่องควบคุม",
+      instruction: "ตรวจกล่องควบคุมให้เลือกช่อง 2 (Input 2) สำหรับ Wireless",
+      expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 แล้ว",
+      image: { status: "pending" },
+    },
+  ],
   osChoice: {
     question: "คุณใช้อุปกรณ์อะไร?",
     options: [
@@ -338,6 +504,15 @@ const smallClassroomWirelessShare: Workflow = {
             keyboardShortcut: ["Win", "K"],
             image: { status: "pending" },
           },
+          {
+            id: "small-classroom-wireless-win-3",
+            order: 3,
+            title: "ตรวจสอบภาพ",
+            instruction: "ตรวจสอบว่าภาพจากโน้ตบุ๊กขึ้นจอแล้ว",
+            expectedResult: "ภาพจากอุปกรณ์ส่วนตัวแสดงบนจอห้อง",
+            image: { status: "pending" },
+          },
+          windowsAudioOutputCheckStep("small-classroom-wireless-win-audio", 4),
         ],
       },
       {
@@ -361,28 +536,20 @@ const smallClassroomWirelessShare: Workflow = {
             platformVariant: "mac",
             image: { status: "pending" },
           },
+          {
+            id: "small-classroom-wireless-mac-3",
+            order: 3,
+            title: "ตรวจสอบภาพ",
+            instruction: "ตรวจสอบว่าภาพจาก Mac หรือ iPad ขึ้นจอแล้ว",
+            expectedResult: "ภาพจากอุปกรณ์ส่วนตัวแสดงบนจอห้อง",
+            image: { status: "pending" },
+          },
+          macAudioOutputCheckStep("small-classroom-wireless-mac-audio", 4),
         ],
       },
     ],
   },
-  steps: [
-    {
-      id: "small-classroom-wireless-3",
-      order: 3,
-      title: "ตรวจสอบภาพ",
-      instruction: "ตรวจสอบว่าภาพจากอุปกรณ์ของคุณขึ้นจอแล้ว",
-      expectedResult: "ภาพจากอุปกรณ์ส่วนตัวแสดงบนจอห้อง",
-      image: { status: "pending" },
-    },
-    {
-      id: "small-classroom-wireless-4",
-      order: 4,
-      title: "ตรวจสอบเสียง",
-      instruction: "หากเนื้อหาที่แชร์มีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
-      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
-      image: { status: "pending" },
-    },
-  ],
+  steps: [],
   troubleshootingIds: [
     "wireless-device-not-found",
     "cannot-connect",
@@ -399,11 +566,14 @@ const smartClassroomUseRoomPc: Workflow = {
   slug: "use-room-pc",
   title: "🖥 ใช้คอมพิวเตอร์ประจำห้อง",
   icon: "Monitor",
+  // Phase 8 §10.1 — known technical issue: no audio from Room PC on
+  // 701/702. Do NOT add an audio-check step or troubleshooting link
+  // here; just state it plainly and point to IT Support.
   criticalWarning: {
-    level: "info",
-    title: "💡 ข้อควรรู้",
+    level: "warning",
+    title: "หมายเหตุ",
     message:
-      "หากใช้คอมพิวเตอร์ประจำห้องแล้วไม่มีเสียง ให้ตรวจสอบการตั้งค่าเสียงของคอมพิวเตอร์ก่อน",
+      "คอมพิวเตอร์ประจำห้อง 701–702 มีปัญหาด้านเสียงจากระบบ หากต้องใช้เสียง กรุณาติดต่อ IT Support",
   },
   steps: [
     {
@@ -423,16 +593,8 @@ const smartClassroomUseRoomPc: Workflow = {
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
-    {
-      id: "smart-classroom-pc-3",
-      order: 3,
-      title: "ตรวจสอบเสียง",
-      instruction: "หากเนื้อหาที่นำเสนอมีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
-      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
-      image: { status: "pending" },
-    },
   ],
-  troubleshootingIds: ["no-signal-on-display", "room-pc-no-audio"],
+  troubleshootingIds: ["no-signal-on-display"],
 };
 
 const smartClassroomUseNotebookHdmi: Workflow = {
@@ -470,14 +632,7 @@ const smartClassroomUseNotebookHdmi: Workflow = {
       expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
-    {
-      id: "smart-classroom-hdmi-5",
-      order: 5,
-      title: "ตรวจสอบเสียง",
-      instruction: "หากเนื้อหาที่นำเสนอมีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
-      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
-      image: { status: "pending" },
-    },
+    genericAudioOutputCheckStep("smart-classroom-hdmi-audio", 5),
   ],
   troubleshootingIds: ["no-signal-on-display", "windows-pc-only-display"],
 };
@@ -551,14 +706,7 @@ const smartClassroomWirelessShare: Workflow = {
       expectedResult: "อุปกรณ์เชื่อมต่อและภาพปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
-    {
-      id: "smart-classroom-wireless-4",
-      order: 4,
-      title: "ตรวจสอบเสียง",
-      instruction: "หากเนื้อหาที่แชร์มีเสียง ให้เปิดเนื้อหานั้นและตรวจสอบเสียง",
-      expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดเนื้อหาที่มีเสียง",
-      image: { status: "pending" },
-    },
+    genericAudioOutputCheckStep("smart-classroom-wireless-audio", 4),
   ],
   troubleshootingIds: [
     "wireless-device-not-found",

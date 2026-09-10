@@ -97,6 +97,14 @@ export interface Workflow {
       description?: string;
       /** e.g. "⭐ แนะนำสำหรับ Mac" — a suggestion, never an exclusivity claim (§9). */
       badge?: string;
+      /**
+       * Phase 8 §4–§9 — control-box prep (which image/audio channel to
+       * select) shown BEFORE the OS question or steps, e.g. "ตรวจกล่อง
+       * ควบคุม → Input = ช่อง 2 → ช่องเสียง = ช่อง 2". Optional and
+       * per-method since not every floor's control box has these
+       * switches (Floor 6 never uses this field).
+       */
+      beforeSteps?: GuideStep[];
       steps?: GuideStep[];
       osChoice?: {
         question: string;
@@ -106,4 +114,11 @@ export interface Workflow {
       fallbackPrompt?: string;
     }[];
   };
+  /**
+   * Phase 8 §4–§13 — same purpose as methodChoice options' `beforeSteps`,
+   * for workflows that go straight to an `osChoice` with no method
+   * selection first (e.g. Floor 6/7 wireless: "ตรวจกล่องควบคุม → เลือก
+   * Input 2" before asking Windows vs Mac).
+   */
+  beforeSteps?: GuideStep[];
 }

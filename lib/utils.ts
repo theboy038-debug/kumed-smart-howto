@@ -115,19 +115,24 @@ export function resolveFact<T>(
  * must hide, not stub out, an action with no confirmed value (Bible §30).
  */
 export function getContactForRoom(room: Room): {
-  phone?: string;
-  lineUrl?: string;
-  helpdeskUrl?: string;
+  phone?: { value: string; label?: string; extension?: string };
+  lineUrl?: { value: string; label?: string; description?: string };
+  helpdeskUrl?: { value: string; label?: string; description?: string };
 } {
   const roomOverride =
     room.configuration.contact?.status === "confirmed"
       ? room.configuration.contact.value
       : undefined;
 
+  const globalPhone = factValue(SUPPORT_CONFIG.phone);
+  const globalLine = factValue(SUPPORT_CONFIG.lineUrl);
+  const globalHelpdesk = factValue(SUPPORT_CONFIG.helpdeskUrl);
+
   return {
-    phone: roomOverride?.phone ?? factValue(SUPPORT_CONFIG.phone)?.value,
-    lineUrl: roomOverride?.lineUrl ?? factValue(SUPPORT_CONFIG.lineUrl)?.value,
-    helpdeskUrl:
-      roomOverride?.helpdeskUrl ?? factValue(SUPPORT_CONFIG.helpdeskUrl)?.value,
+    phone: roomOverride?.phone ? { value: roomOverride.phone } : globalPhone,
+    lineUrl: roomOverride?.lineUrl ? { value: roomOverride.lineUrl } : globalLine,
+    helpdeskUrl: roomOverride?.helpdeskUrl
+      ? { value: roomOverride.helpdeskUrl }
+      : globalHelpdesk,
   };
 }
