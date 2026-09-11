@@ -212,7 +212,8 @@ const jongrakPersonalScreenShare: Workflow = {
       {
         id: "dongle",
         label: "แชร์ผ่าน Wireless Dongle",
-        description: "เสียบอุปกรณ์ที่ให้มาเข้ากับโน้ตบุ๊ก แล้วกดปุ่ม Share เพื่อส่งภาพขึ้นจอ",
+        description:
+          "ต้องติดตั้ง Driver ก่อนใช้งานครั้งแรก — เหมาะสำหรับโน้ตบุ๊ก Windows",
         fallbackMethodId: "wifi",
         fallbackPrompt: "ภาพยังไม่ขึ้น? ลองเชื่อมต่อผ่าน Wi-Fi แทน",
         beforeSteps: [
@@ -242,35 +243,43 @@ const jongrakPersonalScreenShare: Workflow = {
             image: { status: "pending" },
           },
           {
-            id: "jongrak-dongle-2",
+            id: "jongrak-dongle-driver",
             order: 2,
+            title: "ติดตั้ง Driver (ครั้งแรกเท่านั้น)",
+            instruction:
+              "หากเป็นการใช้งานครั้งแรกบนเครื่อง Windows ระบบจะเปิดหน้าต่าง Storage ของ Dongle ให้เปิดตัวติดตั้งแล้วติดตั้ง Driver ก่อนใช้งาน — หากเคยติดตั้งแล้วสามารถข้ามขั้นตอนนี้ได้",
+            image: { status: "pending" },
+          },
+          {
+            id: "jongrak-dongle-2",
+            order: 3,
             title: "รอให้พร้อมใช้งาน",
             instruction: "รอให้อุปกรณ์พร้อมใช้งาน",
             image: { status: "pending" },
           },
           {
             id: "jongrak-dongle-3",
-            order: 3,
+            order: 4,
             title: "กดปุ่ม Share",
             instruction: "กดปุ่ม Share บน Wireless Dongle",
             image: { status: "pending" },
           },
           {
             id: "jongrak-dongle-4",
-            order: 4,
+            order: 5,
             title: "ตรวจสอบภาพ",
             instruction: "รอสักครู่ แล้วดูว่าภาพขึ้นจอหรือไม่",
-            expectedResult: "ภาพจากโน้ตบุ๊กควรแสดงบนจอห้อง",
+            expectedResult: "ภาพจากโน้ตบุ๊กควรแสดงบนจอห้อง (แสดงผลแบบ Mirror หน้าจอ)",
             image: { status: "pending" },
           },
-          genericAudioOutputCheckStep("jongrak-dongle-audio", 5),
+          genericAudioOutputCheckStep("jongrak-dongle-audio", 6),
         ],
       },
       {
         id: "wifi",
         label: "แชร์ผ่าน Wi-Fi",
         badge: "แนะนำสำหรับ Mac",
-        description: "เชื่อมต่อ Wi-Fi ของห้อง แล้วแชร์หน้าจอจากอุปกรณ์ของคุณ",
+        description: "เหมาะสำหรับ Mac และเครื่องที่ต้องการเชื่อมต่อโดยไม่ต้องติดตั้ง Driver",
         beforeSteps: [
           {
             id: "jongrak-wifi-before-1",
@@ -634,7 +643,12 @@ const smartClassroomUseNotebookHdmi: Workflow = {
     },
     genericAudioOutputCheckStep("smart-classroom-hdmi-audio", 5),
   ],
-  troubleshootingIds: ["no-signal-on-display", "windows-pc-only-display"],
+  troubleshootingIds: [
+    "no-signal-on-display",
+    "windows-pc-only-display",
+    "mac-hdmi-display-not-detected",
+    "touchscreen-laptop-signal-retry",
+  ],
 };
 
 const smartClassroomWirelessShare: Workflow = {
@@ -719,213 +733,333 @@ const smartClassroomWirelessShare: Workflow = {
 // Room 703 — Gross Anatomy Lab & Briefing Room (Bible §8–§20, §59–§62)
 // ---------------------------------------------------------------------------
 
-const room703PowerStartup: Workflow = {
-  id: "room703-power-startup",
-  slug: "power-startup",
-  title: "🔌 เปิดระบบห้อง 703 (Power Startup)",
-  shortDescription:
-    "ทำเมื่อระบบยังไม่พร้อมใช้งาน — โดยปกติ IT เปิดเตรียมไว้ให้แล้ว",
-  icon: "Power",
-  criticalWarning: {
-    level: "warning",
-    title: "⚠️ ตรวจสอบก่อนเริ่ม",
-    message:
-      "ต้องเปิดระบบหลักของห้อง Briefing ให้ครบทุกจุดก่อน ระบบควบคุมบน iPadGross จึงจะเริ่มทำงานได้",
-  },
-  steps: [
+/**
+ * Phase 9 §10–§14 — Room 703's power-startup checklist, condensed from
+ * the original 7 granular steps (still preserved verbatim in
+ * `rooms.ts`'s `room703.system.powerStartup`) into 2, since it's now
+ * repeated as a `beforeSteps` prefix across 6 branches (3 tasks × 2
+ * paths each) instead of standing alone as a top-level task. Every
+ * fact (Power Control, Rack, TV check, Power Strip, Initialize,
+ * iPadGross) is preserved — only the step *count* changed, per this
+ * phase's explicit permission to restructure UX flow without touching
+ * business logic. Most of the time IT has already done this, so it's
+ * presented as a quick check, not a mandatory ritual.
+ */
+function room703PowerPrepSteps(): GuideStep[] {
+  return [
     {
-      id: "room703-power-1",
+      id: "room703-power-prep-a",
       order: 1,
-      title: "เปิด Power Control",
-      instruction: "เปิดสวิตช์ Power Control ของระบบห้อง 703",
+      title: "ตรวจสอบว่าระบบเปิดอยู่",
+      instruction:
+        "โดยปกติ IT เปิดระบบเตรียมไว้ให้แล้ว — หากยังไม่ได้เปิด ให้เปิด Power Control และ Rack ของระบบ แล้วตรวจสอบว่าอุปกรณ์ในตู้ Rack และจอทีวีทุกจุดติดไฟแล้ว",
       image: { status: "pending" },
     },
     {
-      id: "room703-power-2",
+      id: "room703-power-prep-b",
       order: 2,
-      title: "เปิด Rack",
-      instruction: "เปิดสวิตช์จ่ายไฟให้ Rack อุปกรณ์",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-power-3",
-      order: 3,
-      title: "ตรวจสอบอุปกรณ์ใน Rack",
-      instruction: "ตรวจสอบว่าอุปกรณ์ทุกกล่องภายใน Rack ติดไฟครบแล้ว",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-power-4",
-      order: 4,
-      title: "ตรวจสอบทีวี",
-      instruction: "ตรวจสอบว่าจอทีวีทุกจุดติดแล้ว",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-power-5",
-      order: 5,
-      title: "เปิด Power Strip ของระบบภาพ",
-      instruction: "เปิด Power Strip ที่จ่ายไฟให้ระบบภาพ",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-power-6",
-      order: 6,
-      title: "รอระบบ Initialize",
-      instruction: "รอให้ระบบเริ่มทำงานจนเสร็จสมบูรณ์ก่อนใช้งานต่อ",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-power-7",
-      order: 7,
       title: "ตรวจสอบ iPadGross",
-      instruction: "ตรวจสอบว่า iPadGross พร้อมใช้งานเป็น Controller แล้ว",
+      instruction:
+        "เปิด Power Strip ของระบบภาพ รอให้ระบบเริ่มทำงานจนเสร็จสมบูรณ์ แล้วตรวจสอบว่า iPadGross พร้อมใช้งานเป็น Controller แล้ว",
       expectedResult: "iPadGross แสดงหน้า Source Selection พร้อมใช้งาน",
       image: { status: "pending" },
     },
-  ],
-  troubleshootingIds: ["device-not-responding"],
-};
+  ];
+}
 
-const room703ViewGrossCamera: Workflow = {
-  id: "room703-view-gross-camera",
-  slug: "view-gross-camera",
-  title: "📹 ดูภาพสดจากกล้องห้อง Gross",
-  shortDescription: "แสดงภาพจากกล้องเคนบนจอห้อง Briefing",
+/** A step-level tip for Room 703's "separated" mode, where Gross always shows the camera (Phase 9 §11). */
+function room703GrossNoSignalWarningStep(id: string, order: number): GuideStep {
+  return {
+    id,
+    order,
+    title: "ตรวจสอบภาพฝั่ง Gross",
+    instruction: "ฝั่งห้อง Gross จะแสดงภาพจากกล้องเคนโดยอัตโนมัติ",
+    warning: {
+      level: "info",
+      message:
+        "ถ้ากล้องเคนไม่เปิดหรือไม่มีสัญญาณ จอฝั่ง Gross อาจแสดง No Signal — ให้ตรวจสอบว่าระบบกล้องเคนเปิดอยู่หรือไม่",
+    },
+    image: { status: "pending" },
+  };
+}
+
+const ROOM703_COMMON_MISTAKE =
+  "iPadGross คืออุปกรณ์ควบคุมระบบห้อง 703 เท่านั้น ไม่ใช่ iPad ส่วนตัวของผู้ใช้";
+
+const room703ViewCamera: Workflow = {
+  id: "room703-view-camera",
+  slug: "view-camera",
+  title: "📹 ดูภาพจากกล้อง",
+  shortDescription: "ใช้กล้องเคนของห้อง Gross Anatomy Lab",
   icon: "Camera",
-  steps: [
-    {
-      id: "room703-camera-1",
-      order: 1,
-      title: "เปิด iPadGross",
-      instruction: "หยิบ iPadGross แล้วเข้าสู่หน้า Source Selection",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-camera-2",
-      order: 2,
-      title: "เลือกกล้องเคน",
-      instruction: "เลือก Source: กล้องเคน",
-      image: { status: "pending" },
-    },
-  ],
-  successMessage: "ภาพสดจากกล้องห้อง Gross ปรากฏบนจอห้อง Briefing",
+  methodChoice: {
+    question: "ต้องการให้ภาพแสดงแบบไหน?",
+    options: [
+      {
+        id: "combined",
+        label: "รวมห้อง",
+        description: "ใช้ภาพเดียวกันทั้งห้อง Gross และห้อง Briefing",
+        beforeSteps: room703PowerPrepSteps(),
+        osChoice: {
+          question: "ต้องการใช้ภาพจากไหน?",
+          options: [
+            {
+              id: "camera",
+              label: "กล้องเคน",
+              steps: [
+                {
+                  id: "room703-view-combined-camera",
+                  order: 1,
+                  title: "เลือกกล้องเคนบน iPadGross",
+                  instruction:
+                    "บน iPadGross เข้าสู่หน้า Room Mode เลือก รวมห้อง แล้วเลือก Source: กล้องเคน",
+                  expectedResult: "ภาพจากกล้องเคนปรากฏบนจอทั้งห้อง Gross และห้อง Briefing",
+                  image: { status: "pending" },
+                },
+              ],
+            },
+            {
+              id: "briefing",
+              label: "ภาพจากห้อง Briefing",
+              steps: [
+                {
+                  id: "room703-view-combined-briefing",
+                  order: 1,
+                  title: "เลือกภาพจากห้อง Briefing บน iPadGross",
+                  instruction:
+                    "บน iPadGross เข้าสู่หน้า Room Mode เลือก รวมห้อง แล้วเลือก Source: Lecture (ภาพจากห้อง Briefing)",
+                  expectedResult: "ภาพจากห้อง Briefing ปรากฏบนจอทั้งสองห้อง",
+                  image: { status: "pending" },
+                },
+              ],
+            },
+          ],
+        },
+        steps: [],
+      },
+      {
+        id: "separated",
+        label: "แยกห้อง",
+        description: "ห้อง Gross และห้อง Briefing ใช้งานคนละภาพได้",
+        beforeSteps: room703PowerPrepSteps(),
+        steps: [
+          {
+            id: "room703-view-separated-1",
+            order: 1,
+            title: "เลือกแยกห้องบน iPadGross",
+            instruction: "บน iPadGross เข้าสู่หน้า Room Mode แล้วเลือก แยกห้อง",
+            expectedResult: "ห้อง Gross แสดงกล้องเคน และห้อง Briefing แสดง Lecture แยกกัน",
+            image: { status: "pending" },
+          },
+          room703GrossNoSignalWarningStep("room703-view-separated-2", 2),
+        ],
+      },
+    ],
+  },
+  steps: [],
   troubleshootingIds: ["no-signal-on-display", "device-not-responding"],
-  commonMistake:
-    "iPadGross คืออุปกรณ์ควบคุมระบบห้อง 703 เท่านั้น ไม่ใช่ iPad ส่วนตัวของผู้ใช้",
+  commonMistake: ROOM703_COMMON_MISTAKE,
 };
 
-const room703LectureHdmi: Workflow = {
-  id: "room703-lecture-hdmi",
-  slug: "lecture-hdmi",
-  title: "💻 ต่อโน้ตบุ๊กส่วนตัวผ่าน HDMI",
+const room703ConnectLaptop: Workflow = {
+  id: "room703-connect-laptop",
+  slug: "connect-laptop",
+  title: "💻 ต่อโน้ตบุ๊ก",
+  shortDescription: "ห้องนี้ไม่มีคอมพิวเตอร์ประจำห้อง — ใช้โน้ตบุ๊กส่วนตัวผ่าน HDMI",
   icon: "Cable",
   criticalWarning: {
     level: "info",
     title: "ℹ️ ห้องนี้ไม่มีคอมพิวเตอร์ประจำห้อง",
     message: "กรุณาใช้โน้ตบุ๊กส่วนตัว",
   },
-  steps: [
-    {
-      id: "room703-hdmi-1",
-      order: 1,
-      title: "เสียบสาย HDMI",
-      instruction: "เสียบสาย HDMI จากกล่องควบคุมเข้ากับโน้ตบุ๊ก",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-hdmi-2",
-      order: 2,
-      title: "เลือก Lecture บน iPadGross",
-      instruction: "บน iPadGross เลือก Source: Lecture แล้วเลือก Input: HDMI",
-      image: { status: "pending" },
-    },
-  ],
-  successMessage: "ภาพจากโน้ตบุ๊กปรากฏบนจอห้อง Briefing",
+  methodChoice: {
+    question: "ต้องการให้ภาพขึ้นที่ไหน?",
+    options: [
+      {
+        id: "briefing-only",
+        label: "เฉพาะห้อง Briefing",
+        description: "ห้อง Gross ยังคงแสดงภาพจากกล้องเคนตามปกติ",
+        beforeSteps: room703PowerPrepSteps(),
+        steps: [
+          {
+            id: "room703-laptop-briefing-1",
+            order: 1,
+            title: "เลือกแยกห้องบน iPadGross",
+            instruction: "บน iPadGross เข้าสู่หน้า Room Mode แล้วเลือก แยกห้อง",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-laptop-briefing-2",
+            order: 2,
+            title: "เสียบสาย HDMI",
+            instruction: "เสียบสาย HDMI จากกล่องควบคุมเข้ากับโน้ตบุ๊ก (Laptop)",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-laptop-briefing-3",
+            order: 3,
+            title: "เลือก Lecture บน iPadGross",
+            instruction: "บน iPadGross เลือก Source: Lecture (ภาพจากห้อง Briefing) แล้วเลือก Input: HDMI",
+            expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอห้อง Briefing",
+            image: { status: "pending" },
+          },
+          room703GrossNoSignalWarningStep("room703-laptop-briefing-4", 4),
+        ],
+      },
+      {
+        id: "both",
+        label: "ทั้งสองห้อง",
+        description: "ภาพจากโน้ตบุ๊กขึ้นจอทั้งห้อง Gross และห้อง Briefing",
+        beforeSteps: room703PowerPrepSteps(),
+        steps: [
+          {
+            id: "room703-laptop-both-1",
+            order: 1,
+            title: "เลือกรวมห้องบน iPadGross",
+            instruction: "บน iPadGross เข้าสู่หน้า Room Mode แล้วเลือก รวมห้อง",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-laptop-both-2",
+            order: 2,
+            title: "เลือกภาพจากห้อง Briefing",
+            instruction: "เลือก Source: Lecture (ภาพจากห้อง Briefing)",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-laptop-both-3",
+            order: 3,
+            title: "เสียบสาย HDMI",
+            instruction: "เสียบสาย HDMI จากกล่องควบคุมเข้ากับโน้ตบุ๊ก (Laptop)",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-laptop-both-4",
+            order: 4,
+            title: "เลือก Input HDMI บน iPadGross",
+            instruction: "เลือก Input: HDMI",
+            expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอทั้งห้อง Gross และห้อง Briefing",
+            image: { status: "pending" },
+          },
+        ],
+      },
+    ],
+  },
+  steps: [],
   troubleshootingIds: ["no-signal-on-display", "device-not-responding"],
-  commonMistake:
-    "iPadGross คืออุปกรณ์ควบคุมระบบห้อง 703 เท่านั้น ไม่ใช่ iPad ส่วนตัวของผู้ใช้",
+  commonMistake: ROOM703_COMMON_MISTAKE,
 };
 
-const room703LectureWireless: Workflow = {
-  id: "room703-lecture-wireless",
-  slug: "lecture-wireless",
-  title: "📡 แชร์จอไร้สายด้วย Wireless Dongle",
+const room703ShareScreen: Workflow = {
+  id: "room703-share-screen",
+  slug: "share-screen",
+  title: "📡 แชร์หน้าจอ",
+  shortDescription: "แชร์หน้าจอไร้สายผ่าน Wireless Dongle",
   icon: "Wifi",
-  steps: [
-    {
-      id: "room703-wireless-1",
-      order: 1,
-      title: "หยิบ Wireless Dongle",
-      instruction: "หยิบ Wireless Dongle",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-wireless-2",
-      order: 2,
-      title: "เสียบ Dongle",
-      instruction:
-        "เสียบ Dongle เข้ากับอุปกรณ์ของคุณ (USB หรือ USB-C / Type-C ตามพอร์ตที่มี)",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-wireless-3",
-      order: 3,
-      title: "รอ Dongle พร้อมใช้งาน",
-      instruction: "รอไฟสถานะบน Dongle เปลี่ยนเป็นสถานะพร้อมใช้งาน",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-wireless-4",
-      order: 4,
-      title: "กด Share",
-      instruction: "กดปุ่มบน Wireless Dongle 1 ครั้ง เพื่อเริ่มแชร์หน้าจอ",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-wireless-5",
-      order: 5,
-      title: "เลือก Lecture บน iPadGross",
-      instruction:
-        "บน iPadGross เลือก Source: Lecture แล้วเลือก Input: Wireless",
-      image: { status: "pending" },
-    },
-  ],
-  successMessage: "ภาพจากโน้ตบุ๊กปรากฏบนจอห้อง Briefing",
+  methodChoice: {
+    question: "ต้องการให้ภาพขึ้นที่ไหน?",
+    options: [
+      {
+        id: "briefing-only",
+        label: "เฉพาะห้อง Briefing",
+        description: "ห้อง Gross ยังคงแสดงภาพจากกล้องเคนตามปกติ",
+        beforeSteps: room703PowerPrepSteps(),
+        steps: [
+          {
+            id: "room703-share-briefing-1",
+            order: 1,
+            title: "เลือกแยกห้องบน iPadGross",
+            instruction: "บน iPadGross เข้าสู่หน้า Room Mode แล้วเลือก แยกห้อง",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-briefing-2",
+            order: 2,
+            title: "หยิบ Wireless Dongle",
+            instruction: "หยิบ Wireless Dongle",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-briefing-3",
+            order: 3,
+            title: "เสียบ Dongle",
+            instruction: "เสียบ Dongle เข้ากับอุปกรณ์ของคุณ (USB หรือ USB-C / Type-C ตามพอร์ตที่มี)",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-briefing-4",
+            order: 4,
+            title: "กด Share",
+            instruction: "รอไฟสถานะบน Dongle พร้อมใช้งาน แล้วกดปุ่มบน Wireless Dongle 1 ครั้ง",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-briefing-5",
+            order: 5,
+            title: "เลือก Lecture บน iPadGross",
+            instruction: "บน iPadGross เลือก Source: Lecture (ภาพจากห้อง Briefing) แล้วเลือก Input: Wireless",
+            expectedResult: "ภาพจากอุปกรณ์ของคุณปรากฏบนจอห้อง Briefing",
+            image: { status: "pending" },
+          },
+          room703GrossNoSignalWarningStep("room703-share-briefing-6", 6),
+        ],
+      },
+      {
+        id: "both",
+        label: "ทั้งสองห้อง",
+        description: "ภาพที่แชร์ขึ้นจอทั้งห้อง Gross และห้อง Briefing",
+        beforeSteps: room703PowerPrepSteps(),
+        steps: [
+          {
+            id: "room703-share-both-1",
+            order: 1,
+            title: "เลือกรวมห้องบน iPadGross",
+            instruction: "บน iPadGross เข้าสู่หน้า Room Mode แล้วเลือก รวมห้อง",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-both-2",
+            order: 2,
+            title: "เลือกภาพจากห้อง Briefing",
+            instruction: "เลือก Source: Lecture (ภาพจากห้อง Briefing)",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-both-3",
+            order: 3,
+            title: "หยิบ Wireless Dongle",
+            instruction: "หยิบ Wireless Dongle",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-both-4",
+            order: 4,
+            title: "เสียบ Dongle",
+            instruction: "เสียบ Dongle เข้ากับอุปกรณ์ของคุณ (USB หรือ USB-C / Type-C ตามพอร์ตที่มี)",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-both-5",
+            order: 5,
+            title: "กด Share",
+            instruction: "รอไฟสถานะบน Dongle พร้อมใช้งาน แล้วกดปุ่มบน Wireless Dongle 1 ครั้ง",
+            image: { status: "pending" },
+          },
+          {
+            id: "room703-share-both-6",
+            order: 6,
+            title: "เลือก Input Wireless บน iPadGross",
+            instruction: "เลือก Input: Wireless",
+            expectedResult: "ภาพจากอุปกรณ์ของคุณปรากฏบนจอทั้งห้อง Gross และห้อง Briefing",
+            image: { status: "pending" },
+          },
+        ],
+      },
+    ],
+  },
+  steps: [],
   troubleshootingIds: ["wireless-device-not-found", "device-not-responding"],
-  commonMistake:
-    "iPadGross คืออุปกรณ์ควบคุมระบบห้อง 703 เท่านั้น ไม่ใช่ iPad ส่วนตัวของผู้ใช้",
-};
-
-const room703SwitchRoomMode: Workflow = {
-  id: "room703-switch-room-mode",
-  slug: "switch-room-mode",
-  title: "🔀 เปลี่ยนโหมดการใช้งานห้อง",
-  shortDescription:
-    "ปกติระบบพร้อมใช้งานแล้วในโหมด รวมห้อง + Lecture — ทำขั้นตอนนี้เฉพาะเมื่อต้องการเปลี่ยนโหมด",
-  icon: "SplitSquareHorizontal",
-  steps: [
-    {
-      id: "room703-mode-1",
-      order: 1,
-      title: "เปิด Room Mode บน iPadGross",
-      instruction: "บน iPadGross เข้าสู่หน้า Room Mode",
-      image: { status: "pending" },
-    },
-    {
-      id: "room703-mode-2",
-      order: 2,
-      title: "เลือกโหมด",
-      instruction:
-        "เลือก รวมห้อง หากต้องการให้ทั้งสองฝั่งแสดง Source เดียวกัน หรือเลือก แยกห้อง หากต้องการให้ Gross แสดงกล้องเคนและ Briefing แสดง Lecture แยกกัน",
-      expectedResult:
-        "รวมห้อง: ทั้งสองฝั่งแสดง Source เดียวกัน / แยกห้อง: Gross แสดงกล้องเคน, Briefing แสดง Lecture",
-      image: { status: "pending" },
-    },
-  ],
-  troubleshootingIds: ["device-not-responding"],
-  commonMistake:
-    "iPadGross คืออุปกรณ์ควบคุมระบบห้อง 703 เท่านั้น ไม่ใช่ iPad ส่วนตัวของผู้ใช้",
+  commonMistake: ROOM703_COMMON_MISTAKE,
 };
 
 // ---------------------------------------------------------------------------
@@ -942,9 +1076,7 @@ export const WORKFLOWS: Workflow[] = [
   smartClassroomUseRoomPc,
   smartClassroomUseNotebookHdmi,
   smartClassroomWirelessShare,
-  room703PowerStartup,
-  room703ViewGrossCamera,
-  room703LectureHdmi,
-  room703LectureWireless,
-  room703SwitchRoomMode,
+  room703ViewCamera,
+  room703ConnectLaptop,
+  room703ShareScreen,
 ];

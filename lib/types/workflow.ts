@@ -41,6 +41,21 @@ export interface GuideStep {
   showRoomWifi?: boolean;
 }
 
+/**
+ * A generic "ask one question, branch into N labeled paths" choice.
+ * Originally built for "which OS are you on" (hence the field name
+ * `osChoice` used throughout the app), the option `id` was broadened
+ * from a `"windows" | "mac"` union to `string` in Phase 9 so the exact
+ * same mechanism could drive other binary/n-ary branches — e.g. Room
+ * 703's "รวมห้อง vs แยกห้อง" or "กล้องเคน vs ภาพจากห้อง Briefing" —
+ * without inventing a second, parallel branching concept. Existing
+ * "windows"/"mac" data is unaffected since those are just strings too.
+ */
+export interface BranchChoice {
+  question: string;
+  options: { id: string; label: string; steps: GuideStep[] }[];
+}
+
 export interface Workflow {
   id: string;
   slug: Slug;
@@ -67,27 +82,25 @@ export interface Workflow {
    */
   commonMistake?: string;
   /**
-   * Phase 7 §11/§18/§30 — some wireless flows must ask the user's device
-   * type ONCE, up front, then show only that device's steps (never both
-   * mixed in one step). When present, GuidedWorkflow shows this question
+   * Phase 7 §11/§18/§30 — some flows must ask a branching question ONCE,
+   * up front, then show only that branch's steps (never several mixed
+   * into one step). When present, GuidedWorkflow shows this question
    * before any of `steps`, then prepends the chosen option's steps to
-   * `steps` — so `steps` holds whatever is common to both devices
-   * (e.g. "ตรวจสอบภาพ", "ตรวจสอบเสียง"), and each option holds only its
-   * own device-specific connection steps. Optional and additive: a
-   * workflow with no osChoice behaves exactly as before.
+   * `steps` — so `steps` holds whatever is common to every branch, and
+   * each option holds only its own branch-specific steps. Optional and
+   * additive: a workflow with no osChoice behaves exactly as before.
    */
-  osChoice?: {
-    question: string;
-    options: { id: "windows" | "mac"; label: string; steps: GuideStep[] }[];
-  };
+  osChoice?: BranchChoice;
   /**
    * Phase 7 v3 §7–§11 — some flows have genuinely different SHARING
    * METHODS (not just OS differences), e.g. "Wireless Dongle" vs
    * "Wi-Fi". Ask which method up front; each method may optionally ask
-   * device type afterward via its own `osChoice`. A method can also
-   * name a `fallbackMethodId` — shown as a calm "try this instead"
-   * prompt after its last step, not routed through error-style
-   * troubleshooting (§11, §34).
+   * a further branching question afterward via its own `osChoice`
+   * (Phase 9 §12–§14: e.g. Room 703's "รวมห้อง" branch then asking
+   * which image to show on both rooms). A method can also name a
+   * `fallbackMethodId` — shown as a calm "try this instead" prompt
+   * after its last step, not routed through error-style troubleshooting
+   * (§11, §34).
    */
   methodChoice?: {
     question: string;
@@ -106,10 +119,7 @@ export interface Workflow {
        */
       beforeSteps?: GuideStep[];
       steps?: GuideStep[];
-      osChoice?: {
-        question: string;
-        options: { id: "windows" | "mac"; label: string; steps: GuideStep[] }[];
-      };
+      osChoice?: BranchChoice;
       fallbackMethodId?: string;
       fallbackPrompt?: string;
     }[];

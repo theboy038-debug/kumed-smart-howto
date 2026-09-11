@@ -150,4 +150,35 @@ export const TROUBLESHOOTING_ISSUES: TroubleshootingIssue[] = [
     ],
     escalationMessage: "หากภาพยังไม่ขึ้น กรุณาติดต่อ IT Support",
   },
+  {
+    id: "mac-hdmi-display-not-detected",
+    problem: "เสียบ HDMI จาก Mac แล้วภาพไม่ขึ้น",
+    category: "cable-input",
+    symptoms: ["โดยทั่วไป Mac จะพบจอภายนอกอัตโนมัติเมื่อเชื่อมต่อ HDMI ถูกต้อง — นี่ใช้เมื่อภาพยังไม่ขึ้น"],
+    quickFixes: [
+      {
+        instruction: "เปิด System Settings แล้วเข้าเมนู Displays เพื่อตรวจว่าเครื่องพบจอภายนอกหรือไม่",
+        expectedResult: "เมนู Displays แสดงจอภายนอกของห้อง",
+      },
+      {
+        instruction: "หากยังไม่พบจอ ให้ใช้ปุ่ม Detect Displays ในเมนูเดียวกัน",
+        expectedResult: "ภาพจาก Mac ปรากฏบนจอห้อง",
+      },
+    ],
+    escalationMessage: "หากภาพยังไม่ขึ้น กรุณาติดต่อ IT Support",
+  },
+  {
+    id: "touchscreen-laptop-signal-retry",
+    problem: "เลือก Laptop บน Smart Touchscreen แล้วภาพยังไม่ขึ้น",
+    category: "cable-input",
+    symptoms: ["เลือกช่อง Laptop ทันทีหลังเสียบสาย HDMI แล้วภาพไม่ขึ้น"],
+    quickFixes: [
+      {
+        instruction:
+          "หากเลือก Laptop แล้วภาพยังไม่ขึ้น ให้ลองสลับไป Wireless แล้วกลับมาเลือก Laptop อีกครั้ง เพื่อให้ระบบตรวจหาสัญญาณใหม่",
+        expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอหลัก",
+      },
+    ],
+    escalationMessage: "หากภาพยังไม่ขึ้น กรุณาติดต่อ IT Support",
+  },
 ];

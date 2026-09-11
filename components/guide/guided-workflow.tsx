@@ -24,7 +24,7 @@ export function GuidedWorkflow({
 }) {
   const [methodId, setMethodId] = useState<string | null>(null);
   const [beforeIndex, setBeforeIndex] = useState(0);
-  const [osChoiceId, setOsChoiceId] = useState<"windows" | "mac" | null>(null);
+  const [osChoiceId, setOsChoiceId] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [showHelp, setShowHelp] = useState(false);

@@ -167,8 +167,8 @@ export const SMART_CLASSROOM_NUMBERS = ["701", "702"] as const;
 
 /** Phase 7 §29 — verified per-room Wi-Fi, one shared password. */
 const SMART_CLASSROOM_WIFI: Record<string, string> = {
-  "701": "smartclassroom701",
-  "702": "smartclassroom702",
+  "701": "smartclassroom1",
+  "702": "smartclassroom2",
 };
 const SMART_CLASSROOM_WIFI_PASSWORD = "qwertyuiop";
 
@@ -240,11 +240,9 @@ const room703: GrossBriefingRoom = {
     displayName: { status: "pending" },
   },
   workflowIds: [
-    "room703-power-startup",
-    "room703-view-gross-camera",
-    "room703-lecture-hdmi",
-    "room703-lecture-wireless",
-    "room703-switch-room-mode",
+    "room703-view-camera",
+    "room703-connect-laptop",
+    "room703-share-screen",
   ],
   troubleshootingIds: [
     "wireless-device-not-found",
