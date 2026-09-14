@@ -29,7 +29,7 @@ const mainConferenceRoom: RoomBase = {
       status: "confirmed",
       value: { ssid: "WL Present Meeting Room", password: "12345678" },
     },
-    displayName: { status: "ready" },
+    displayName: { status: "confirmed" },
   },
   workflowIds: [
     "jongrak-room-pc-presentation",
