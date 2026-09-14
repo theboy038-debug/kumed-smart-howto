@@ -25,7 +25,9 @@ function windowsAudioOutputCheckStep(id: string, order: number): GuideStep {
       'กด "Ctrl + Win + V" แล้วเลือกอุปกรณ์เสียงออก (Output) ของระบบห้องให้ถูกต้อง จากนั้นเปิดวิดีโอหรือไฟล์ที่มีเสียงเพื่อทดสอบ',
     keyboardShortcut: ["Ctrl", "Win", "V"],
     expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดสื่อที่มีเสียง",
-    image: { status: "pending" },
+    image: { status: "ready",
+        src: "/images/shared/Aten-soundcheck.webp",
+        alt: "Input 1 เลือกเสียงออกช่อง ATEN_T4KHDMI" },
   };
 }
 
@@ -43,7 +45,9 @@ function genericAudioOutputCheckStep(id: string, order: number): GuideStep {
     instruction:
       "ตรวจสอบว่าเสียงออกจากระบบห้อง (บน Windows: กด Ctrl + Win + V แล้วเลือกอุปกรณ์เสียงออกที่ถูกต้อง) จากนั้นเปิดสื่อที่มีเสียงเพื่อทดสอบ",
     expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดสื่อที่มีเสียง",
-    image: { status: "pending" },
+    image: { status: "ready",
+        src: "/images/shared/window-wifi-soundcheck.webp",
+        alt: "window wifi soundcheck" },
   };
 }
 
@@ -54,7 +58,9 @@ function macAudioOutputCheckStep(id: string, order: number): GuideStep {
     title: "ตรวจสอบเสียง",
     instruction: "ตรวจสอบว่าเสียงออกจากระบบห้องแล้ว โดยเปิดวิดีโอหรือไฟล์ที่มีเสียงเพื่อทดสอบ",
     expectedResult: "เสียงออกจากระบบห้องเมื่อเปิดสื่อที่มีเสียง",
-    image: { status: "pending" },
+    image: { status: "ready",
+        src: "/images/shared/mac-audio.webp",
+        alt: "mac audio check" },
   };
 }
 
@@ -65,7 +71,7 @@ function macAudioOutputCheckStep(id: string, order: number): GuideStep {
 const jongrakRoomPcPresentation: Workflow = {
   id: "jongrak-room-pc-presentation",
   slug: "room-pc-presentation",
-  title: "🖥️ นำเสนอผ่านคอมพิวเตอร์ประจำห้อง",
+  title: " นำเสนอผ่านคอมพิวเตอร์ประจำห้อง",
   shortDescription:
     "ใช้คอมพิวเตอร์ที่อยู่ในห้องเพื่อเปิด PowerPoint, PDF เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
   icon: "Monitor",
@@ -76,7 +82,9 @@ const jongrakRoomPcPresentation: Workflow = {
       title: "ตรวจกล่องควบคุม",
       instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — ถ้าใช้คอมพิวเตอร์ประจำห้อง ให้เลือกช่อง 1 (Input 1)",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 (ภาพ) แล้ว",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        alt: "กล่องควบคุมของห้องจงรัก กดเลือก Input 1" },
     },
     {
       id: "jongrak-pc-before-2",
@@ -84,7 +92,9 @@ const jongrakRoomPcPresentation: Workflow = {
       title: "ตรวจช่องเสียง",
       instruction: "ตรวจช่องเสียงที่กล่องควบคุมให้เป็นช่อง 1 เพื่อให้เสียงมาจากคอมพิวเตอร์ประจำห้อง",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 1 แล้ว",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        alt: "กล่องควบคุมของห้องจงรัก กดเลือก Audio 1" },
     },
   ],
   steps: [
@@ -93,7 +103,9 @@ const jongrakRoomPcPresentation: Workflow = {
       order: 1,
       title: "เปิดคอมพิวเตอร์ประจำห้อง",
       instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/room-pc-power.webp",
+        alt: "ปุ่มเปิดเครื่องคอมพิวเตอร์ประจำห้อง" },
     },
     {
       id: "jongrak-pc-2",
@@ -101,7 +113,9 @@ const jongrakRoomPcPresentation: Workflow = {
       title: "รอภาพขึ้นจอ",
       instruction: "รอสักครู่ให้ภาพขึ้นจอ",
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอ",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/shared/jongrak-openpc.webp",
+        alt: "ภาพคอมเปิดติด" },
     },
     windowsAudioOutputCheckStep("jongrak-pc-audio", 3),
     {
@@ -109,14 +123,18 @@ const jongrakRoomPcPresentation: Workflow = {
       order: 4,
       title: "เปิดเนื้อหาที่ต้องการนำเสนอ",
       instruction: "เปิดไฟล์หรือโปรแกรมที่ต้องการนำเสนอ เช่น PowerPoint, PDF หรือเว็บไซต์",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/shared/openpwp.webp",
+        alt: "เปิดเอกสารประกอบการประชุม" },
     },
     {
       id: "jongrak-pc-4",
       order: 5,
       title: "เริ่มนำเสนอ",
       instruction: "เริ่มนำเสนอเนื้อหาของคุณได้เลย",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/shared/startpresent.webp",
+        alt: "เริ่มนำเสนอผ่านโปรเจคเตอร์" },
     },
   ],
   troubleshootingIds: ["no-signal-on-display"],
@@ -125,7 +143,7 @@ const jongrakRoomPcPresentation: Workflow = {
 const jongrakWebexRecording: Workflow = {
   id: "jongrak-webex-recording",
   slug: "webex-recording",
-  title: "🎥 ประชุม Webex พร้อมบันทึกภาพ",
+  title: " ประชุม Webex พร้อมบันทึกภาพ",
   shortDescription: "ใช้สำหรับประชุมออนไลน์ — ไม่จำเป็นต้องเปิดหากแค่ต้องการนำเสนอ",
   icon: "Video",
   criticalWarning: {
@@ -141,7 +159,9 @@ const jongrakWebexRecording: Workflow = {
       title: "ตรวจกล่องควบคุม",
       instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — เลือกช่อง 1 (Input 1) สำหรับคอมพิวเตอร์ประจำห้อง",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 (ภาพ) แล้ว",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        alt: "กล่องควบคุมของห้องจงรัก กดเลือก Input 1" },
     },
     {
       id: "jongrak-webex-before-2",
@@ -149,7 +169,9 @@ const jongrakWebexRecording: Workflow = {
       title: "ตรวจช่องเสียง",
       instruction: "ตรวจช่องเสียงที่กล่องควบคุมให้เป็นช่อง 1",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 1 แล้ว",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        alt: "กล่องควบคุมของห้องจงรัก กดเลือก Audio 1" },
     },
   ],
   steps: [
@@ -159,7 +181,9 @@ const jongrakWebexRecording: Workflow = {
       title: "เปิดโปรแกรม Webex",
       instruction: "เปิดโปรแกรม Webex บนคอมพิวเตอร์ประจำห้อง",
       expectedResult: "โปรแกรม Webex พร้อมสำหรับเข้าร่วมการประชุม",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-open.webp",
+        alt: "หน้าจอโปรแกรม Webex" },
     },
     windowsAudioOutputCheckStep("jongrak-webex-audio-windows", 2),
     {
@@ -169,15 +193,19 @@ const jongrakWebexRecording: Workflow = {
       instruction:
         "เข้าเมนูตั้งค่า Audio ในโปรแกรม Webex เลือก Speaker / เสียงออก แล้วกด Test Speaker",
       expectedResult: "ได้ยินเสียงทดสอบจากระบบห้อง",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-audio-settings.webp",
+        alt: "หน้าจอตั้งค่าเสียงใน Webex" },
     },
     {
-      id: "jongrak-webex-audio-mic",
+      id: "jongrak-webex-audio-microphone",
       order: 4,
       title: "ทดสอบไมโครโฟนใน Webex",
       instruction: "ในหน้าเดียวกัน เลือก Microphone / ไมโครโฟน แล้วกด Test Microphone",
       expectedResult: "เห็นแถบระดับเสียงตอบสนองเมื่อพูด",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-microphone-settings.webp", 
+        alt: "การตั้งค่าไมโครโฟนใน Webex" },
     },
     {
       id: "jongrak-webex-2",
@@ -185,7 +213,9 @@ const jongrakWebexRecording: Workflow = {
       title: "เริ่มบันทึกวิดีโอ",
       instruction: "กดปุ่ม Record ภายใน Webex เพื่อเริ่มบันทึกวิดีโอ",
       expectedResult: "สถานะการบันทึกแสดงว่าระบบกำลังบันทึก",
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-record-button.webp",
+        alt: "ปุ่มบันทึกวิดีโอใน Webex" },
     },
     {
       id: "jongrak-webex-3",
@@ -194,7 +224,77 @@ const jongrakWebexRecording: Workflow = {
       instruction:
         "หากต้องการแชร์สไลด์หรือหน้าจอ ให้กดปุ่ม Share ภายในโปรแกรม Webex เท่านั้น — ห้ามเปลี่ยนช่องสัญญาณของ Mini Monitor",
       statusTags: [{ kind: "do-not-change" }],
-      image: { status: "pending" },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-share-button.webp",
+        alt: "ปุ่มแชร์หน้าจอใน Webex" },
+    },
+  ],
+  troubleshootingIds: ["no-signal-on-display", "device-not-responding"],
+};
+
+const jongrakWebexPersonalShare: Workflow = {
+  id: "jongrak-webex-personal-share",
+  slug: "webex-personal-share",
+  title: " แชร์หน้าจอจากโน้ตบุ๊กระหว่างประชุม Webex",
+  shortDescription: "กำลังประชุม Webex อยู่แล้ว และต้องการนำเสนอจากโน้ตบุ๊ก (Laptop) ส่วนตัว",
+  icon: "Smartphone",
+  criticalWarning: {
+    level: "info",
+    title: "ℹ️ ไม่ต้องเปลี่ยน Source ของห้อง",
+    message:
+      "การประชุมหลักยังคงใช้คอมพิวเตอร์ประจำห้อง (Input 1 / Audio Switch 1) เหมือนเดิม — ไม่ต้องสลับกล่องควบคุมไปที่โน้ตบุ๊ก มิฉะนั้น Webex ที่กำลังประชุมอยู่จะถูกตัดออกจากจอห้อง",
+  },
+  steps: [
+    {
+      id: "jongrak-webex-share-1",
+      order: 1,
+      title: "เปิด Webex บนโน้ตบุ๊ก",
+      instruction: "เปิดโปรแกรมหรือเว็บ Webex บนโน้ตบุ๊ก (Laptop) ส่วนตัวของคุณ",
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-open.webp",
+        alt: "หน้าจอโปรแกรม Webex" },
+    },
+    {
+      id: "jongrak-webex-share-2",
+      order: 2,
+      title: "เข้าร่วมห้องประชุมเดียวกัน",
+      instruction: "Join Meeting เดียวกับที่กำลังประชุมอยู่ในห้อง",
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-join-meeting.webp",
+        alt: "หน้าจอเข้าร่วมการประชุม Webex" },
+    },
+    {
+      id: "jongrak-webex-share-3",
+      order: 3,
+      title: "ปิดไมโครโฟน",
+      instruction: "ปิดไมโครโฟน (Mute) บนโน้ตบุ๊ก",
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-mute-audio.webp",
+        alt: "ปิดเสียงไมค์บนโน้ตบุ๊ก" },
+    },
+    {
+      id: "jongrak-webex-share-4",
+      order: 4,
+      title: "ปิดเสียงของโน้ตบุ๊ก",
+      instruction:
+        "ปิดเสียง (Speaker / Audio) ของโน้ตบุ๊ก เพื่อป้องกันเสียงสะท้อนและเสียงซ้ำ — เสียงประชุมหลักยังคงมาจากระบบห้องตามปกติ",
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/mute-audio.webp",
+        alt: "ปิดเสียงบนโน้ตบุ๊ก" },
+    },
+    {
+      id: "jongrak-webex-share-5",
+      order: 5,
+      title: "กด Share Screen",
+      instruction: "ใช้เมนู Share Screen ในโปรแกรม Webex บนโน้ตบุ๊ก แล้วเลือกหน้าจอหรือหน้าต่างที่ต้องการนำเสนอ",
+      expectedResult: "คนในห้องเห็นสิ่งที่แชร์ผ่านจอห้องตามปกติ และผู้เข้าร่วมทางไกลก็เห็นเช่นกัน",
+      warning: {
+        level: "info",
+        message: "การแชร์หน้าจอผ่าน Webex อาจมีความหน่วงเล็กน้อย ขึ้นอยู่กับเครือข่ายและการเชื่อมต่อ",
+      },
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/webex-share-button.webp",
+        alt: "ปุ่มแชร์หน้าจอใน Webex" },
     },
   ],
   troubleshootingIds: ["no-signal-on-display", "device-not-responding"],
@@ -203,7 +303,7 @@ const jongrakWebexRecording: Workflow = {
 const jongrakPersonalScreenShare: Workflow = {
   id: "jongrak-personal-screen-share",
   slug: "personal-screen-share",
-  title: "📱 แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
+  title: " แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
   shortDescription: "โน้ตบุ๊ก (Laptop), Mac หรือ iPad — เลือกวิธีที่สะดวกสำหรับคุณ",
   icon: "Smartphone",
   methodChoice: {
@@ -223,7 +323,9 @@ const jongrakPersonalScreenShare: Workflow = {
             title: "ตรวจกล่องควบคุม",
             instruction: "ตรวจที่กล่องควบคุมก่อนว่าเลือกช่อง 2 (Input 2) สำหรับ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 (ภาพ) แล้ว",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              alt: "กล่องควบคุม เลือกช่อง 2 สำหรับภาพ" },
           },
           {
             id: "jongrak-dongle-before-2",
@@ -231,7 +333,9 @@ const jongrakPersonalScreenShare: Workflow = {
             title: "ตรวจช่องเสียง",
             instruction: "ตรวจช่องเสียงให้เป็นช่อง 2 เพื่อให้เสียงมาจากอุปกรณ์ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 2 แล้ว",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              alt: "กล่องควบคุม เลือกช่อง 2 สำหรับเสียง" },
           },
         ],
         steps: [
@@ -240,29 +344,37 @@ const jongrakPersonalScreenShare: Workflow = {
             order: 1,
             title: "เสียบ Wireless Dongle",
             instruction: "เสียบ Wireless Dongle เข้ากับโน้ตบุ๊ก (Laptop)",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/dongle-plug.webp",
+              alt: "เสียบ Dongle เข้ากับโน้ตบุ๊ก" },
           },
           {
             id: "jongrak-dongle-driver",
             order: 2,
-            title: "ติดตั้ง Driver (ครั้งแรกเท่านั้น)",
+            title: "ติดตั้ง Driver ",
             instruction:
-              "หากเป็นการใช้งานครั้งแรกบนเครื่อง Windows ระบบจะเปิดหน้าต่าง Storage ของ Dongle ให้เปิดตัวติดตั้งแล้วติดตั้ง Driver ก่อนใช้งาน — หากเคยติดตั้งแล้วสามารถข้ามขั้นตอนนี้ได้",
-            image: { status: "pending" },
+              "บนเครื่อง Windows ระบบจะเปิดหน้าต่าง Storage ของ Dongle ให้เปิดตัวติดตั้งแล้วติดตั้ง Driver MS ก่อนใช้งาน — หากเคยติดตั้งแล้วสามารถข้ามขั้นตอนนี้ได้(กรณีที่ภาพไม่ขึ้น ให้ลองกลับมาติดตั้ง Driver ใหม่อีกครั้ง)",
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/dongle-driver-install.gif", // ใช้ไฟล์ GIF ได้เลย
+              alt: "ภาพเคลื่อนไหวแสดงการติดตั้ง Driver" },
           },
           {
             id: "jongrak-dongle-2",
             order: 3,
             title: "รอให้พร้อมใช้งาน",
             instruction: "รอให้อุปกรณ์พร้อมใช้งาน",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/dongle-led-ready.webp",
+              alt: "ไฟสถานะบน Dongle พร้อมใช้งาน" },
           },
           {
             id: "jongrak-dongle-3",
             order: 4,
             title: "กดปุ่ม Share",
             instruction: "กดปุ่ม Share บน Wireless Dongle",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/dongle-press-share.webp",
+              alt: "กดปุ่มที่ Dongle เพื่อแชร์จอ" },
           },
           {
             id: "jongrak-dongle-4",
@@ -270,7 +382,9 @@ const jongrakPersonalScreenShare: Workflow = {
             title: "ตรวจสอบภาพ",
             instruction: "รอสักครู่ แล้วดูว่าภาพขึ้นจอหรือไม่",
             expectedResult: "ภาพจากโน้ตบุ๊กควรแสดงบนจอห้อง (แสดงผลแบบ Mirror หน้าจอ)",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/dongle-check-image.webp",
+              alt: "ตรวจสอบภาพที่แสดงบนจอ" },
           },
           genericAudioOutputCheckStep("jongrak-dongle-audio", 6),
         ],
@@ -287,7 +401,9 @@ const jongrakPersonalScreenShare: Workflow = {
             title: "ตรวจกล่องควบคุม",
             instruction: "ตรวจกล่องควบคุมให้เลือกช่อง 2 (Input 2) สำหรับ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 (ภาพ) แล้ว",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              alt: "กล่องควบคุม เลือกช่อง 2 สำหรับภาพ" },
           },
           {
             id: "jongrak-wifi-before-2",
@@ -295,7 +411,9 @@ const jongrakPersonalScreenShare: Workflow = {
             title: "ตรวจช่องเสียง",
             instruction: "ตรวจช่องเสียงให้เป็นช่อง 2 เพื่อให้เสียงมาจากอุปกรณ์ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 2 แล้ว",
-            image: { status: "pending" },
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              alt: "กล่องควบคุม เลือกช่อง 2 สำหรับเสียง" },
           },
         ],
         osChoice: {
@@ -312,7 +430,9 @@ const jongrakPersonalScreenShare: Workflow = {
                   instruction: 'เชื่อมต่อ Wi-Fi ชื่อ "WL Present Meeting Room" รหัสผ่าน "12345678"',
                   statusTags: [{ kind: "wifi-required" }],
                   showRoomWifi: true,
-                  image: { status: "pending" },
+                  image: { status: "ready",
+              src: "/images/floor-5/jongrak/window-connect-wifi.webp",
+              alt: "เชื่อมต่อ Wi-Fi" },
                 },
                 {
                   id: "jongrak-wifi-win-2",
@@ -321,7 +441,9 @@ const jongrakPersonalScreenShare: Workflow = {
                   instruction: 'กด "Win + K" แล้วเลือกอุปกรณ์ของห้อง',
                   platformVariant: "windows",
                   keyboardShortcut: ["Win", "K"],
-                  image: { status: "pending" },
+                  image: { status: "ready",
+              src: "/images/floor-5/jongrak/window-connecting.webp",
+              alt: "เชื่อมต่อออกจอ" },
                 },
                 {
                   id: "jongrak-wifi-win-3",
@@ -329,9 +451,11 @@ const jongrakPersonalScreenShare: Workflow = {
                   title: "ตรวจสอบภาพ",
                   instruction: "ตรวจสอบว่าภาพจากโน้ตบุ๊กขึ้นจอแล้ว",
                   expectedResult: "ภาพจากโน้ตบุ๊กปรากฏบนจอ",
-                  image: { status: "pending" },
+                  image: { status: "ready",
+              src: "/images/floor-5/jongrak/dongle-check-image.webp",
+              alt: "กล่องควบคุม ตรวจสอบภาพ" },
                 },
-                windowsAudioOutputCheckStep("jongrak-wifi-win-audio", 4),
+                genericAudioOutputCheckStep("jongrak-dongle-audio", 7),
               ],
             },
             {
@@ -345,7 +469,9 @@ const jongrakPersonalScreenShare: Workflow = {
                   instruction: 'เชื่อมต่อ Wi-Fi ชื่อ "WL Present Meeting Room" รหัสผ่าน "12345678"',
                   statusTags: [{ kind: "wifi-required" }],
                   showRoomWifi: true,
-                  image: { status: "pending" },
+                  image: { status: "ready",
+              src: "/images/floor-5/jongrak/mac-connect-wifi.webp",
+              alt: "mac เชื่อมต่อ Wi-Fi" },
                 },
                 {
                   id: "jongrak-wifi-mac-2",
@@ -353,7 +479,9 @@ const jongrakPersonalScreenShare: Workflow = {
                   title: "แชร์หน้าจอ",
                   instruction: "เปิด Control Center แล้วเลือก Screen Mirroring จากนั้นเลือกระบบของห้อง",
                   platformVariant: "mac",
-                  image: { status: "pending" },
+                  image: { status: "ready",
+              src: "/images/floor-5/jongrak/mac-share-screen.GIF",
+              alt: "mac แชร์หน้าจอ" },
                 },
                 {
                   id: "jongrak-wifi-mac-3",
@@ -361,7 +489,9 @@ const jongrakPersonalScreenShare: Workflow = {
                   title: "ตรวจสอบภาพ",
                   instruction: "ตรวจสอบว่าภาพจาก Mac หรือ iPad ขึ้นจอแล้ว",
                   expectedResult: "ภาพจากอุปกรณ์ของคุณปรากฏบนจอ",
-                  image: { status: "pending" },
+                  image: { status: "ready",
+              src: "/images/floor-5/jongrak/mac-check-image.webp",
+              alt: "mac ตรวจสอบภาพ" },
                 },
                 macAudioOutputCheckStep("jongrak-wifi-mac-audio", 4),
               ],
@@ -423,46 +553,46 @@ const smallClassroomUseRoomPc: Workflow = {
     message:
       "ในบางห้อง เมื่อกดปุ่มที่กล่องควบคุมสัญญาณ TV อาจเปลี่ยนไปช่องอื่นอัตโนมัติ หากภาพหาย ให้ใช้รีโมท TV เลือกกลับไปยังช่อง HDMI ที่เชื่อมต่อกับระบบห้อง",
   },
-  // Phase 8 §2 — Floor 6's control box has ONLY an image Input switch,
-  // no audio switch. Do not add an audio-channel step here.
+  // Phase 9.1 §1 — check/power the room FIRST (never assume someone
+  // already did), THEN check the control box, THEN pick a source.
   beforeSteps: [
     {
-      id: "small-classroom-pc-before-1",
+      id: "small-classroom-pc-before-system",
       order: 1,
+      title: "ตรวจสอบระบบห้อง",
+      instruction:
+        "ก่อนใช้งาน ให้ตรวจสอบว่าระบบห้องเปิดอยู่หรือไม่ หากยังไม่เปิด ให้เปิดตู้ Rack และเปิด/ตรวจสอบไฟเลี้ยงของระบบก่อนใช้งาน แล้วรอสักครู่ให้อุปกรณ์เริ่มทำงาน",
+      image: { status: "pending" },
+    },
+    {
+      id: "small-classroom-pc-before-1",
+      order: 2,
       title: "ตรวจกล่องควบคุม",
-      instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — ถ้าใช้คอมพิวเตอร์ประจำห้อง ให้เลือกช่อง 1 (Input 1)",
+      instruction: "ตรวจกล่องควบคุม — ถ้าใช้คอมพิวเตอร์ประจำห้อง ให้เลือกช่อง 1 (Input 1)",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 แล้ว",
       image: { status: "pending" },
     },
   ],
   steps: [
     {
-      id: "small-classroom-pc-1",
-      order: 1,
-      title: "ตรวจสอบระบบห้อง",
-      instruction:
-        "ตรวจสอบว่าระบบห้องเปิดอยู่ — โดยปกติเจ้าหน้าที่อาคารเป็นผู้เปิดระบบให้ก่อนใช้งาน",
-      image: { status: "pending" },
-    },
-    {
       id: "small-classroom-pc-2",
-      order: 2,
+      order: 1,
       title: "เปิดคอมพิวเตอร์ประจำห้อง",
       instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
       image: { status: "pending" },
     },
     {
       id: "small-classroom-pc-3",
-      order: 3,
+      order: 2,
       title: "ตรวจสอบภาพ",
       instruction: "ตรวจสอบว่าภาพจากคอมพิวเตอร์ประจำห้องขึ้นจอแล้ว",
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
-    windowsAudioOutputCheckStep("small-classroom-pc-audio", 4),
+    windowsAudioOutputCheckStep("small-classroom-pc-audio", 3),
     {
       id: "small-classroom-pc-4",
-      order: 5,
+      order: 4,
       title: "ใช้คอมพิวเตอร์นำเสนอ",
       instruction: "เปิด PowerPoint, PDF, เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
       image: { status: "pending" },
@@ -477,11 +607,19 @@ const smallClassroomWirelessShare: Workflow = {
   title: "📡 แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
   shortDescription: "โน้ตบุ๊ก (Laptop) หรือ iPad — ผ่านระบบไร้สายเท่านั้น",
   icon: "Wifi",
-  // Phase 8 §2 — Input only, no audio switch on this floor's control box.
+  // Phase 9.1 §1 — same reorder: system/Rack check before the control box.
   beforeSteps: [
     {
-      id: "small-classroom-wireless-before-1",
+      id: "small-classroom-wireless-before-system",
       order: 1,
+      title: "ตรวจสอบระบบห้อง",
+      instruction:
+        "ก่อนใช้งาน ให้ตรวจสอบว่าระบบห้องเปิดอยู่หรือไม่ หากยังไม่เปิด ให้เปิดตู้ Rack และเปิด/ตรวจสอบไฟเลี้ยงของระบบก่อนใช้งาน แล้วรอสักครู่ให้อุปกรณ์เริ่มทำงาน",
+      image: { status: "pending" },
+    },
+    {
+      id: "small-classroom-wireless-before-1",
+      order: 2,
       title: "ตรวจกล่องควบคุม",
       instruction: "ตรวจกล่องควบคุมให้เลือกช่อง 2 (Input 2) สำหรับ Wireless",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 แล้ว",
@@ -598,7 +736,7 @@ const smartClassroomUseRoomPc: Workflow = {
       order: 2,
       title: "เลือกแหล่งสัญญาณที่ Smart Touchscreen",
       instruction:
-        "แตะปุ่มคอมพิวเตอร์ประจำห้องบน Smart Touchscreen (หากภาพยังไม่ขึ้นอัตโนมัติ)",
+        'แตะปุ่ม "PC" บน Smart Touchscreen (หากภาพยังไม่ขึ้นอัตโนมัติ)',
       expectedResult: "ภาพจากคอมพิวเตอร์ประจำห้องปรากฏบนจอหลัก",
       image: { status: "pending" },
     },
@@ -630,7 +768,7 @@ const smartClassroomUseNotebookHdmi: Workflow = {
       id: "smart-classroom-hdmi-3",
       order: 3,
       title: "เลือกแหล่งสัญญาณที่ Smart Touchscreen",
-      instruction: "แตะ Smart Touchscreen แล้วเลือกช่อง 2 (HDMI)",
+      instruction: 'แตะ Smart Touchscreen แล้วเลือก "Laptop"',
       image: { status: "pending" },
     },
     {
@@ -657,6 +795,15 @@ const smartClassroomWirelessShare: Workflow = {
   title: "📡 แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
   shortDescription: "โน้ตบุ๊ก (Laptop) หรือ iPad — ผ่าน Crestron Wireless",
   icon: "Wifi",
+  beforeSteps: [
+    {
+      id: "smart-classroom-wireless-before-1",
+      order: 1,
+      title: "เลือกแหล่งสัญญาณที่ Smart Touchscreen",
+      instruction: 'แตะ Smart Touchscreen แล้วเลือก "Wireless"',
+      image: { status: "pending" },
+    },
+  ],
   osChoice: {
     question: "คุณใช้อุปกรณ์อะไร?",
     options: [
@@ -1069,6 +1216,7 @@ const room703ShareScreen: Workflow = {
 export const WORKFLOWS: Workflow[] = [
   jongrakRoomPcPresentation,
   jongrakWebexRecording,
+  jongrakWebexPersonalShare,
   jongrakPersonalScreenShare,
   floor6MeetingUseHdmi,
   smallClassroomUseRoomPc,

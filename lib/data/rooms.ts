@@ -23,17 +23,18 @@ const mainConferenceRoom: RoomBase = {
   shortDescription:
     "ห้องประชุมหลัก พร้อมระบบ Webex บันทึกวิดีโอ และแชร์หน้าจอไร้สาย",
   template: "conference",
-  status: "pending",
+  status: "ready",
   configuration: {
     wifi: {
       status: "confirmed",
       value: { ssid: "WL Present Meeting Room", password: "12345678" },
     },
-    displayName: { status: "pending" },
+    displayName: { status: "ready" },
   },
   workflowIds: [
     "jongrak-room-pc-presentation",
     "jongrak-webex-recording",
+    "jongrak-webex-personal-share",
     "jongrak-personal-screen-share",
   ],
   troubleshootingIds: [
@@ -207,9 +208,7 @@ function createSmartClassroomRoom(roomNumber: string): RoomBase {
       "windows-pc-only-display",
     ],
     overview: [
-      "ช่อง 1 = คอมพิวเตอร์ประจำห้อง",
-      "ช่อง 2 = ต่อโน้ตบุ๊ก (Laptop) ด้วยสาย HDMI",
-      "ช่อง 3 = แชร์หน้าจอแบบไร้สาย",
+      'Smart Touchscreen แสดงปุ่มเลือกแหล่งภาพเรียงลำดับ: "PC" → "Laptop" → "Wireless"',
     ],
   };
 }

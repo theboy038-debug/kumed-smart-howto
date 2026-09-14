@@ -12,7 +12,7 @@ export const APP_CONFIG = {
     name: "คณะแพทยศาสตร์ มหาวิทยาลัยเกษตรศาสตร์",
     shortName: "Faculty of Medicine, Kasetsart University",
   },
-  version: "1.0.0",
+  version: "4.0", // "Test 0.0.1" — used in footer and meta tags
   /** "light" | "dark" | "system" — passed to next-themes' defaultTheme. */
   defaultTheme: "system" as const,
 } as const;

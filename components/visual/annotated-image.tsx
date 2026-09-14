@@ -122,15 +122,28 @@ export function AnnotatedImage({
   /** Opens the lightbox — omitted when this render is already inside one. */
   onOpen?: () => void;
 }) {
+  // Phase 9.1 (image/GIF continuation) — next/image's optimizer can
+  // re-encode an animated GIF into a static frame. Detecting by file
+  // extension needs no data-model change: GIFs render via a plain
+  // native <img> (animation-safe), everything else keeps using
+  // next/image (optimized, lazy-loaded). Both paths render identically
+  // otherwise — same fill/object-cover box, same annotation overlay.
+  const isGif = src.toLowerCase().endsWith(".gif");
+
   const content = (
     <>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes="(max-width: 640px) 100vw, 640px"
-        className="object-cover"
-      />
+      {isGif ? (
+        // eslint-disable-next-line @next/next/no-img-element -- animated GIFs must bypass the image optimizer to keep animating
+        <img src={src} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(max-width: 640px) 100vw, 640px"
+          className="object-cover"
+        />
+      )}
       {annotations && annotations.length > 0 && (
         <AnnotationOverlay annotations={annotations} />
       )}
