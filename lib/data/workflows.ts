@@ -313,7 +313,7 @@ const jongrakPersonalScreenShare: Workflow = {
         id: "dongle",
         label: "แชร์ผ่าน Wireless Dongle",
         description:
-          "ต้องติดตั้ง Driver ก่อนใช้งานครั้งแรก — เหมาะสำหรับโน้ตบุ๊ก Windows",
+          "ต้องติดตั้ง Driver ก่อนใช้งาน — เหมาะสำหรับโน้ตบุ๊ก Windows",
         fallbackMethodId: "wifi",
         fallbackPrompt: "ภาพยังไม่ขึ้น? ลองเชื่อมต่อผ่าน Wi-Fi แทน",
         beforeSteps: [
@@ -480,7 +480,7 @@ const jongrakPersonalScreenShare: Workflow = {
                   instruction: "เปิด Control Center แล้วเลือก Screen Mirroring จากนั้นเลือกระบบของห้อง",
                   platformVariant: "mac",
                   image: { status: "ready",
-              src: "/images/floor-5/jongrak/mac-share-screen.GIF",
+              src: "/images/floor-5/jongrak/mac-share-screen.gif",
               alt: "mac แชร์หน้าจอ" },
                 },
                 {
