@@ -154,6 +154,15 @@ const jongrakWebexRecording: Workflow = {
   },
   beforeSteps: [
     {
+      id: "jongrak-pc-1",
+      order: 1,
+      title: "เปิดคอมพิวเตอร์ประจำห้อง",
+      instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/room-pc-power.webp",
+        alt: "ปุ่มเปิดเครื่องคอมพิวเตอร์ประจำห้อง" },
+    },
+    {
       id: "jongrak-webex-before-1",
       order: 1,
       title: "ตรวจกล่องควบคุม",
