@@ -73,9 +73,18 @@ const jongrakRoomPcPresentation: Workflow = {
   slug: "room-pc-presentation",
   title: " นำเสนอผ่านคอมพิวเตอร์ประจำห้อง",
   shortDescription:
-    "ใช้คอมพิวเตอร์ที่อยู่ในห้องเพื่อเปิด PowerPoint, PDF เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
+    "ใช้คอมพิวเตอร์ของห้องเพื่อเปิด PowerPoint, PDF เว็บไซต์ หรือเนื้อหาที่ต้องการนำเสนอ",
   icon: "Monitor",
   beforeSteps: [
+    {
+      id: "jongrak-pc-1",
+      order: 1,
+      title: "เปิดคอมพิวเตอร์ประจำห้อง",
+      instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
+      image: { status: "ready",
+        src: "/images/floor-5/jongrak/room-pc-power.webp",
+        alt: "ปุ่มเปิดเครื่องคอมพิวเตอร์ประจำห้อง" },
+    },
     {
       id: "jongrak-pc-before-1",
       order: 1,
@@ -98,15 +107,6 @@ const jongrakRoomPcPresentation: Workflow = {
     },
   ],
   steps: [
-    {
-      id: "jongrak-pc-1",
-      order: 1,
-      title: "เปิดคอมพิวเตอร์ประจำห้อง",
-      instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
-      image: { status: "ready",
-        src: "/images/floor-5/jongrak/room-pc-power.webp",
-        alt: "ปุ่มเปิดเครื่องคอมพิวเตอร์ประจำห้อง" },
-    },
     {
       id: "jongrak-pc-2",
       order: 2,
@@ -143,7 +143,7 @@ const jongrakRoomPcPresentation: Workflow = {
 const jongrakWebexRecording: Workflow = {
   id: "jongrak-webex-recording",
   slug: "webex-recording",
-  title: " ประชุม Webex พร้อมบันทึกภาพ",
+  title: " Webex: ประชุมออนไลน์พร้อมบันทึกภาพ",
   shortDescription: "ใช้สำหรับประชุมออนไลน์ — ไม่จำเป็นต้องเปิดหากแค่ต้องการนำเสนอ",
   icon: "Video",
   criticalWarning: {
@@ -191,7 +191,7 @@ const jongrakWebexRecording: Workflow = {
       order: 3,
       title: "ทดสอบเสียงใน Webex (Speaker)",
       instruction:
-        "เข้าเมนูตั้งค่า Audio ในโปรแกรม Webex เลือก Speaker / เสียงออก แล้วกด Test Speaker",
+        "เข้าเมนูตั้งค่า Audio ในโปรแกรม Webex เลือก Speaker(ATEN_T4KHDMI) แล้วกด Test Speaker",
       expectedResult: "ได้ยินเสียงทดสอบจากระบบห้อง",
       image: { status: "ready",
         src: "/images/floor-5/jongrak/webex-audio-settings.webp",
@@ -201,7 +201,7 @@ const jongrakWebexRecording: Workflow = {
       id: "jongrak-webex-audio-microphone",
       order: 4,
       title: "ทดสอบไมโครโฟนใน Webex",
-      instruction: "ในหน้าเดียวกัน เลือก Microphone / ไมโครโฟน แล้วกด Test Microphone",
+      instruction: "ในหน้าเดียวกัน เลือก Microphone(RUIPU-WIFI) เปิดไมค์ในห้องแล้วกด Test Microphone",
       expectedResult: "เห็นแถบระดับเสียงตอบสนองเมื่อพูด",
       image: { status: "ready",
         src: "/images/floor-5/jongrak/webex-microphone-settings.webp", 
@@ -235,7 +235,7 @@ const jongrakWebexRecording: Workflow = {
 const jongrakWebexPersonalShare: Workflow = {
   id: "jongrak-webex-personal-share",
   slug: "webex-personal-share",
-  title: " แชร์หน้าจอจากโน้ตบุ๊กระหว่างประชุม Webex",
+  title: " Webex: แชร์หน้าจอจากโน้ตบุ๊กระหว่างประชุมออนไลน์",
   shortDescription: "กำลังประชุม Webex อยู่แล้ว และต้องการนำเสนอจากโน้ตบุ๊ก (Laptop) ส่วนตัว",
   icon: "Smartphone",
   criticalWarning: {
@@ -303,7 +303,7 @@ const jongrakWebexPersonalShare: Workflow = {
 const jongrakPersonalScreenShare: Workflow = {
   id: "jongrak-personal-screen-share",
   slug: "personal-screen-share",
-  title: " แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
+  title: "⭐แชร์หน้าจอจากอุปกรณ์ส่วนตัว",
   shortDescription: "โน้ตบุ๊ก (Laptop), Mac หรือ iPad — เลือกวิธีที่สะดวกสำหรับคุณ",
   icon: "Smartphone",
   methodChoice: {
@@ -313,7 +313,7 @@ const jongrakPersonalScreenShare: Workflow = {
         id: "dongle",
         label: "แชร์ผ่าน Wireless Dongle",
         description:
-          "ต้องติดตั้ง Driver ก่อนใช้งาน — เหมาะสำหรับโน้ตบุ๊ก Windows",
+          "ติดตั้ง Driver ก่อนใช้งาน — เหมาะสำหรับโน้ตบุ๊ก Windows",
         fallbackMethodId: "wifi",
         fallbackPrompt: "ภาพยังไม่ขึ้น? ลองเชื่อมต่อผ่าน Wi-Fi แทน",
         beforeSteps: [
@@ -362,7 +362,7 @@ const jongrakPersonalScreenShare: Workflow = {
             id: "jongrak-dongle-2",
             order: 3,
             title: "รอให้พร้อมใช้งาน",
-            instruction: "รอให้อุปกรณ์พร้อมใช้งาน",
+            instruction: "อุปกรณ์พร้อมใช้งาน",
             image: { status: "ready",
               src: "/images/floor-5/jongrak/dongle-led-ready.webp",
               alt: "ไฟสถานะบน Dongle พร้อมใช้งาน" },
@@ -371,7 +371,7 @@ const jongrakPersonalScreenShare: Workflow = {
             id: "jongrak-dongle-3",
             order: 4,
             title: "กดปุ่ม Share",
-            instruction: "กดปุ่ม Share บน Wireless Dongle",
+            instruction: "กดปุ่ม Share บน Wireless Dongle 1 ครั้งเพื่อเริ่มแชร์หน้าจอ",
             image: { status: "ready",
               src: "/images/floor-5/jongrak/dongle-press-share.webp",
               alt: "กดปุ่มที่ Dongle เพื่อแชร์จอ" },
@@ -438,7 +438,7 @@ const jongrakPersonalScreenShare: Workflow = {
                   id: "jongrak-wifi-win-2",
                   order: 2,
                   title: "แชร์หน้าจอ",
-                  instruction: 'กด "Win + K" แล้วเลือกอุปกรณ์ของห้อง',
+                  instruction: 'กด "Win + K" แล้วเลือก "WL Present Meeting Room" เพื่อแชร์หน้าจอ',
                   platformVariant: "windows",
                   keyboardShortcut: ["Win", "K"],
                   image: { status: "ready",
@@ -477,7 +477,7 @@ const jongrakPersonalScreenShare: Workflow = {
                   id: "jongrak-wifi-mac-2",
                   order: 2,
                   title: "แชร์หน้าจอ",
-                  instruction: "เปิด Control Center แล้วเลือก Screen Mirroring จากนั้นเลือกระบบของห้อง",
+                  instruction: "เปิด Control Center แล้วเลือก Screen Mirroring จากนั้นเลือก WL Present Meeting Room",
                   platformVariant: "mac",
                   image: { status: "ready",
               src: "/images/floor-5/jongrak/mac-screen-mirroring.gif",
