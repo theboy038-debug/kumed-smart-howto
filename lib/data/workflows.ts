@@ -355,7 +355,7 @@ const jongrakPersonalScreenShare: Workflow = {
             instruction:
               "บนเครื่อง Windows ระบบจะเปิดหน้าต่าง Storage ของ Dongle ให้เปิดตัวติดตั้งแล้วติดตั้ง Driver MS ก่อนใช้งาน — หากเคยติดตั้งแล้วสามารถข้ามขั้นตอนนี้ได้(กรณีที่ภาพไม่ขึ้น ให้ลองกลับมาติดตั้ง Driver ใหม่อีกครั้ง)",
             image: { status: "ready",
-              src: "/images/floor-5/jongrak/dongle-driver-install.gif", // ใช้ไฟล์ GIF ได้เลย
+              src: "/images/floor-5/jongrak/dongle-driver-setup.gif", // ใช้ไฟล์ GIF ได้เลย
               alt: "ภาพเคลื่อนไหวแสดงการติดตั้ง Driver" },
           },
           {
@@ -480,7 +480,7 @@ const jongrakPersonalScreenShare: Workflow = {
                   instruction: "เปิด Control Center แล้วเลือก Screen Mirroring จากนั้นเลือกระบบของห้อง",
                   platformVariant: "mac",
                   image: { status: "ready",
-              src: "/images/floor-5/jongrak/mac-share-screen.gif",
+              src: "/images/floor-5/jongrak/mac-screen-mirroring.gif",
               alt: "mac แชร์หน้าจอ" },
                 },
                 {

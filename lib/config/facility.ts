@@ -6,13 +6,13 @@
  */
 
 export const APP_CONFIG = {
-  productName: "KUMED SMART HOW-TO",
+  productName: "KUMED HOW-TO",
   shortName: "KUMED IT GUIDE",
   organization: {
     name: "คณะแพทยศาสตร์ มหาวิทยาลัยเกษตรศาสตร์",
     shortName: "Faculty of Medicine, Kasetsart University",
   },
-  version: "4.0", // "Test 0.0.1" — used in footer and meta tags
+  version: "กำลังปรับปรุง", // "Test 0.0.1" — used in footer and meta tags
   /** "light" | "dark" | "system" — passed to next-themes' defaultTheme. */
   defaultTheme: "system" as const,
 } as const;
