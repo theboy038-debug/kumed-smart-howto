@@ -92,7 +92,7 @@ const jongrakRoomPcPresentation: Workflow = {
       instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — ถ้าใช้คอมพิวเตอร์ประจำห้อง ให้เลือกช่อง 1 (Input 1)",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 (ภาพ) แล้ว",
       image: { status: "ready",
-        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        src: "/images/floor-5/jongrak/control-box-input1.webp",
         alt: "กล่องควบคุมของห้องจงรัก กดเลือก Input 1" },
     },
     {
@@ -102,7 +102,7 @@ const jongrakRoomPcPresentation: Workflow = {
       instruction: "ตรวจช่องเสียงที่กล่องควบคุมให้เป็นช่อง 1 เพื่อให้เสียงมาจากคอมพิวเตอร์ประจำห้อง",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 1 แล้ว",
       image: { status: "ready",
-        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        src: "/images/floor-5/jongrak/control-box-audio1.webp",
         alt: "กล่องควบคุมของห้องจงรัก กดเลือก Audio 1" },
     },
   ],
@@ -150,7 +150,7 @@ const jongrakWebexRecording: Workflow = {
     level: "danger",
     title: "🛑 คำเตือนสำคัญ",
     message:
-      "ห้ามกดเปลี่ยนช่องบน Mini Monitor ต้องคงไว้ที่ IN 1 เสมอ เพื่อให้ระบบ Webex บันทึกภาพบรรยากาศภายในห้องประชุมได้อย่างถูกต้อง",
+      "ห้ามกดเปลี่ยนช่องบน Mini Monitor ต้องคงไว้ที่ IN 1 เสมอ เพื่อให้ระบบ Webex บันทึกภาพบรรยากาศภายในห้องประชุมได้อย่างถูกต้องและเปิดคอมพิวเตอร์ประจำห้องไว้เสมอ",
   },
   beforeSteps: [
     {
@@ -160,7 +160,7 @@ const jongrakWebexRecording: Workflow = {
       instruction: "ตรวจกล่องควบคุมก่อนเริ่มใช้งาน — เลือกช่อง 1 (Input 1) สำหรับคอมพิวเตอร์ประจำห้อง",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 1 (ภาพ) แล้ว",
       image: { status: "ready",
-        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        src: "/images/floor-5/jongrak/control-box-input1.webp",
         alt: "กล่องควบคุมของห้องจงรัก กดเลือก Input 1" },
     },
     {
@@ -170,7 +170,7 @@ const jongrakWebexRecording: Workflow = {
       instruction: "ตรวจช่องเสียงที่กล่องควบคุมให้เป็นช่อง 1",
       expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 1 แล้ว",
       image: { status: "ready",
-        src: "/images/floor-5/jongrak/control-box-input1-audio1.webp",
+        src: "/images/floor-5/jongrak/control-box-audio1.webp",
         alt: "กล่องควบคุมของห้องจงรัก กดเลือก Audio 1" },
     },
   ],
@@ -318,13 +318,22 @@ const jongrakPersonalScreenShare: Workflow = {
         fallbackPrompt: "ภาพยังไม่ขึ้น? ลองเชื่อมต่อผ่าน Wi-Fi แทน",
         beforeSteps: [
           {
+            id: "jongrak-pc-1",
+            order: 1,
+            title: "เปิดคอมพิวเตอร์ประจำห้อง",
+            instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/room-pc-power.webp",
+              alt: "ปุ่มเปิดเครื่องคอมพิวเตอร์ประจำห้อง" },
+          },
+          {
             id: "jongrak-dongle-before-1",
             order: 1,
             title: "ตรวจกล่องควบคุม",
             instruction: "ตรวจที่กล่องควบคุมก่อนว่าเลือกช่อง 2 (Input 2) สำหรับ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 (ภาพ) แล้ว",
             image: { status: "ready",
-              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              src: "/images/floor-5/jongrak/control-box-input2.webp",
               alt: "กล่องควบคุม เลือกช่อง 2 สำหรับภาพ" },
           },
           {
@@ -334,7 +343,7 @@ const jongrakPersonalScreenShare: Workflow = {
             instruction: "ตรวจช่องเสียงให้เป็นช่อง 2 เพื่อให้เสียงมาจากอุปกรณ์ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 2 แล้ว",
             image: { status: "ready",
-              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              src: "/images/floor-5/jongrak/control-box-audio2.webp",
               alt: "กล่องควบคุม เลือกช่อง 2 สำหรับเสียง" },
           },
         ],
@@ -396,13 +405,22 @@ const jongrakPersonalScreenShare: Workflow = {
         description: "เหมาะสำหรับ Mac และเครื่องที่ต้องการเชื่อมต่อโดยไม่ต้องติดตั้ง Driver",
         beforeSteps: [
           {
+            id: "jongrak-pc-1",
+            order: 1,
+            title: "เปิดคอมพิวเตอร์ประจำห้อง",
+            instruction: "เปิดคอมพิวเตอร์ประจำห้อง",
+            image: { status: "ready",
+              src: "/images/floor-5/jongrak/room-pc-power.webp",
+              alt: "ปุ่มเปิดเครื่องคอมพิวเตอร์ประจำห้อง" },
+          },
+          {
             id: "jongrak-wifi-before-1",
             order: 1,
             title: "ตรวจกล่องควบคุม",
             instruction: "ตรวจกล่องควบคุมให้เลือกช่อง 2 (Input 2) สำหรับ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่อง 2 (ภาพ) แล้ว",
             image: { status: "ready",
-              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              src: "/images/floor-5/jongrak/control-box-input2.webp",
               alt: "กล่องควบคุม เลือกช่อง 2 สำหรับภาพ" },
           },
           {
@@ -412,7 +430,7 @@ const jongrakPersonalScreenShare: Workflow = {
             instruction: "ตรวจช่องเสียงให้เป็นช่อง 2 เพื่อให้เสียงมาจากอุปกรณ์ Wireless",
             expectedResult: "กล่องควบคุมแสดงว่าเลือกช่องเสียงเป็นช่อง 2 แล้ว",
             image: { status: "ready",
-              src: "/images/floor-5/jongrak/control-box-input2-audio2.webp",
+              src: "/images/floor-5/jongrak/control-box-audio2.webp",
               alt: "กล่องควบคุม เลือกช่อง 2 สำหรับเสียง" },
           },
         ],
